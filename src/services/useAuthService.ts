@@ -1,6 +1,5 @@
 import { request } from "."
 import { API_METHOD } from "../utils/constant";
-import { replaceUrlParams } from "../utils/helper";
 
 export const AUTH_URLS = {
     REGISTER: "auth/register",
