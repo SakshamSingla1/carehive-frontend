@@ -1,35 +1,21 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { AuthenticatedUserProvider } from "./contexts/AuthenticatedUserContext";
+import ColorThemeListing from "./components/pages/ColorTheme/ColorThemeListing.page";
+import ColorThemeCreate from "./components/pages/ColorTheme/ColorThemeCreate.page";
+import ColorThemeEdit from "./components/pages/ColorTheme/ColorThemeEdit.page";
+import ColorThemeView from "./components/pages/ColorTheme/ColorThemeView.page";
+import { Route, Routes } from "react-router-dom";
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <AuthenticatedUserProvider>
+      <Routes>
+        <Route path="/color-theme" element={<ColorThemeListing />} />
+        <Route path="/color-theme/create" element={<ColorThemeCreate />} />
+        <Route path="/color-theme/:role/:themeName/edit" element={<ColorThemeEdit />} />
+        <Route path="/color-theme/:role/:themeName" element={<ColorThemeView />} />
+      </Routes>
+    </AuthenticatedUserProvider>
+  );
 }
 
-export default App
+export default App;
