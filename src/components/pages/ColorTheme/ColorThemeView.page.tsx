@@ -1,8 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useColorThemeService, type ColorTheme } from "../../../services/useColorThemeService";
 import { useFormik } from "formik";
-import * as yup from "yup";
-import { HTTP_STATUS } from "../../../utils/types";
 import { useNavigate, useParams } from "react-router-dom";
 import ColorThemeForm from "../../templates/ColorTheme/ColorThemeForm.template";
 import { FaPalette } from "react-icons/fa";
@@ -14,7 +12,6 @@ const ColorThemeView: React.FC = () => {
     const params = useParams();
     const role = String(params.role);
     const themeName = String(params.themeName);
-    const [theme, setTheme] = useState<ColorTheme | null>(null);
 
     const formik = useFormik<ColorTheme>({
         initialValues: {
@@ -40,7 +37,6 @@ const ColorThemeView: React.FC = () => {
                     colorGroups: res.data.data.palette.colorGroups
                 }
             });
-            setTheme(res.data.data);
         } catch (err) {
             console.error("Failed to load color theme:", err);
         }
