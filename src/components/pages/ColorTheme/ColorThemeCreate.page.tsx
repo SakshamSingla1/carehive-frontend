@@ -1,4 +1,3 @@
-import React from "react";
 import { useColorThemeService, type ColorTheme } from "../../../services/useColorThemeService";
 import { useFormik } from "formik";
 import * as yup from "yup";

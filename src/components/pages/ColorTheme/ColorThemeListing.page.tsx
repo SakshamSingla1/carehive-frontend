@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { HTTP_STATUS, type IPagination, SORT_ENUM } from '../../../utils/types';
+import { HTTP_STATUS, type IPagination } from '../../../utils/types';
 import { initialPaginationValues } from '../../../utils/constant';
 import ColorThemeListingTemplate from '../../templates/ColorTheme/ColorThemeListing.template';
 import { useColorThemeService, type ColorTheme } from '../../../services/useColorThemeService';
 import { useSearchParams } from 'react-router-dom';
 
-interface IColorThemeFilterRequest {
-    search: string;
-    sort: string;
-    page: number;
-    size: number;
-}
+// interface IColorThemeFilterRequest {
+//     search: string;
+//     sort: string;
+//     page: number;
+//     size: number;
+// }
 
 const ColorThemeListingPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -40,7 +40,7 @@ const ColorThemeListingPage: React.FC = () => {
                     });
                     setColorThemesTo(res?.data?.data?.content);
                 }
-            }).catch((error) => {
+            }).catch(() => {
                 setColorThemesTo([]);
             })
     }
@@ -50,7 +50,7 @@ const ColorThemeListingPage: React.FC = () => {
         setPagination({ ...pagination, currentPage: 0 })
     }
 
-    const handlePaginationChange = (event: React.MouseEvent<HTMLButtonElement>, newPage: number) => {
+    const handlePaginationChange = (newPage: number) => {
         setPagination((prevPagination) => ({
             ...prevPagination,
             currentPage: newPage
