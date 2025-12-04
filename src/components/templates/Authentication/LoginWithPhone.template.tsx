@@ -13,6 +13,7 @@ import { AUTH_STATE, HTTP_STATUS } from "../../../utils/types";
 interface LoginWithPhoneProps {
     setPhoneNumber: (phoneNumber: string) => void;
   setAuthState: (authState: AUTH_STATE) => void;
+  setIsRegisterFlow: (isRegisterFlow: boolean) => void;
 }
 
 /* ---------------------- Validation Schema ---------------------- */
@@ -23,7 +24,7 @@ const validationSchema = Yup.object({
 });
 
 /* ---------------------- Login Component ---------------------- */
-const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneNumber }) => {
+const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneNumber, setIsRegisterFlow }) => {
   const authService = useAuthService();
   const [isLoading, setIsLoading] = useState(false);
 
@@ -39,6 +40,7 @@ const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneN
         const response = await authService.sendOtp(values);
         if (response.status === HTTP_STATUS.OK) {
           setPhoneNumber(String(values.phoneNumber));
+          setIsRegisterFlow(false);
           setAuthState(AUTH_STATE.OTP_VERIFICATION);
         }
       } finally {

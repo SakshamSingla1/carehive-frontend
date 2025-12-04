@@ -19,6 +19,7 @@ export interface AuthRegisterDTO {
     username: string;
     email: string;
     password: string;
+    confirmPassword?: string;
     roleCode: string;
     phoneNumber: string;
 }
@@ -40,6 +41,7 @@ export interface AuthVerifyOtpDTO {
 export interface PasswordResetConfirmDTO {
     token: string;
     newPassword: string;
+    confirmPassword?: string;
 }
 
 export interface ChangePasswordDTO {
