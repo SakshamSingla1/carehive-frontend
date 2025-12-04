@@ -25,3 +25,14 @@ export const SORT_ENUM = {
    CREATED_AT_ASC: "created_at_asc",
    CREATED_AT_DESC: "created_at_desc"
 }
+
+export const AUTH_STATE = {
+    LOGIN_WITH_EMAIL: "login-with-email",
+    LOGIN_WITH_PHONE: "login-with-phone",
+    REGISTER: "register",
+    FORGOT_PASSWORD: "forgot-password",
+    RESET_PASSWORD: "reset-password",
+    OTP_VERIFICATION: "otp-verification"
+} as const;
+
+export type AUTH_STATE = typeof AUTH_STATE[keyof typeof AUTH_STATE];

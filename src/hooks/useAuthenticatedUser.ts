@@ -34,11 +34,13 @@ export const useAuthenticatedUser = () => {
             context.setAuthenticatedUser(null);
             context.setThemes(null);
             context.setDefaultTheme(null);
+            context.setNavlinks(null);
 
             // Clear localStorage
             localStorage.removeItem("user");
             localStorage.removeItem("themes");
             localStorage.removeItem("defaultTheme");
+            localStorage.removeItem("navlinks");
             localStorage.removeItem("reLoginTimestamp");
 
             alert("Session expired. Please log in again.");
@@ -50,10 +52,12 @@ export const useAuthenticatedUser = () => {
             context.setAuthenticatedUser(null);
             context.setThemes(null);
             context.setDefaultTheme(null);
+            context.setNavlinks(null);
 
             localStorage.removeItem("user");
             localStorage.removeItem("themes");
             localStorage.removeItem("defaultTheme");
+            localStorage.removeItem("navlinks");
             localStorage.removeItem("reLoginTimestamp");
         }
 

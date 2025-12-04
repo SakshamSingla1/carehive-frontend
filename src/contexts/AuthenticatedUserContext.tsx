@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState} from "react";
 import { type ColorTheme } from "../services/useColorThemeService";
+import type { NavlinkResponse } from "../services/useNavlinkService";
 
 interface AuthenticatedUserProviderType {
     children: React.ReactNode;
@@ -29,6 +30,11 @@ export interface AuthenticatedUserContextType {
 
     defaultTheme: ColorTheme | null;
     setDefaultTheme: (theme: ColorTheme | null) => void;
+
+    navlinks: NavlinkResponse[] | null;
+    setNavlinks: (navlinks: NavlinkResponse[] | null) => void;
+
+    logout: () => void;
 }
 
 // ---------------- DEFAULT CONTEXT ----------------
@@ -45,6 +51,11 @@ export const AuthenticatedUserContext = React.createContext<AuthenticatedUserCon
 
     defaultTheme: null,
     setDefaultTheme: () => {},
+
+    navlinks: null,
+    setNavlinks: () => {},
+
+    logout: () => {},
 });
 
 // ---------------- PROVIDER ----------------
@@ -79,6 +90,15 @@ export const AuthenticatedUserProvider: React.FC<AuthenticatedUserProviderType> 
         }
     });
 
+    const [navlinks, setNavlinks] = useState<NavlinkResponse[] | null>(() => {
+        try {
+            const stored = localStorage.getItem("navlinks");
+            return stored ? JSON.parse(stored) : null;
+        } catch {
+            return null;
+        }
+    });
+
     // ---------------- SYNC AUTH DIALOG ----------------
 
     const syncAuthDialogActive = (value?: boolean) => {
@@ -102,7 +122,25 @@ export const AuthenticatedUserProvider: React.FC<AuthenticatedUserProviderType> 
         else localStorage.removeItem("defaultTheme");
     }, [defaultTheme]);
 
+    useEffect(() => {
+        if (navlinks) localStorage.setItem("navlinks", JSON.stringify(navlinks));
+        else localStorage.removeItem("navlinks");
+    }, [navlinks]);
+
     // ---------------- PROVIDER VALUE ----------------
+
+    const logout = () => {
+        setAuthenticatedUser(null);
+        setThemes(null);
+        setDefaultTheme(null);
+        setNavlinks(null);
+
+        localStorage.removeItem("user");
+        localStorage.removeItem("themes");
+        localStorage.removeItem("defaultTheme");
+        localStorage.removeItem("navlinks");
+        localStorage.removeItem("reLoginTimestamp");
+    };
 
     const providerValue = useMemo(
         () => ({
@@ -117,8 +155,13 @@ export const AuthenticatedUserProvider: React.FC<AuthenticatedUserProviderType> 
 
             defaultTheme,
             setDefaultTheme,
+
+            navlinks,
+            setNavlinks,
+
+            logout,
         }),
-        [isAuthDialogActive, user, themes, defaultTheme]
+        [isAuthDialogActive, user, themes, defaultTheme, navlinks]
     );
 
     return (
