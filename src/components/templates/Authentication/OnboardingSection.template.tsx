@@ -16,7 +16,7 @@ interface OnboardingSectionProps {
 
 const OnboardingSection = ({ onFlip }: OnboardingSectionProps) => {
   return (
-    <div className="h-full flex flex-col overflow-hidden shadow-lg rounded-tl-xl rounded-bl-xl relative">
+    <div className="h-full flex flex-col overflow-hidden shadow-lg rounded-3xl relative">
 
       {/* Banner */}
       <motion.div 
@@ -28,7 +28,7 @@ const OnboardingSection = ({ onFlip }: OnboardingSectionProps) => {
         <img
           src="https://res.cloudinary.com/dwveckkwz/image/upload/v1753875910/Gemini_Generated_Image_lvu2l3lvu2l3lvu2_if4fey.png"
           alt="CareHive Banner"
-          className="w-full object-cover rounded-tl-xl"
+          className="w-full"
           loading="lazy"
         />
       </motion.div>
@@ -37,7 +37,7 @@ const OnboardingSection = ({ onFlip }: OnboardingSectionProps) => {
       <Fade in timeout={700} style={{ height: "100%", display: "flex" }}>
         <motion.div
           className="w-full flex-1 flex flex-col backdrop-blur-xl bg-white/70
-          p-6 overflow-y-auto rounded-bl-xl"
+          p-6 overflow-y-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}

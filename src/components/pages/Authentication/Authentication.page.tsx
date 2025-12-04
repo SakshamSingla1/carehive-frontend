@@ -106,7 +106,7 @@ const Authentication: React.FC = () => {
   };
 
   return (
-    <AuthenticationTemplate authState={authState} setAuthState={setAuthState}>
+    <AuthenticationTemplate setAuthState={setAuthState}>
       {renderAuthView()}
     </AuthenticationTemplate>
   );
