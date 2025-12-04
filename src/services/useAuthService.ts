@@ -64,12 +64,12 @@ export const useAuthService = () => {
         return request(API_METHOD.POST, AUTH_URLS.VERIFY_OTP, null, data);
     }
 
-    const sendOtp = async (data: {email?: string}) => {
-        return request(API_METHOD.POST, AUTH_URLS.SEND_OTP, null, data);
+    const resendOtp = async (data: {email?: string}) => {
+        return request(API_METHOD.POST, AUTH_URLS.RESEND_OTP, null, data);
     }
 
-    const resendOtp = async (data: {phone?: string}) => {
-        return request(API_METHOD.POST, AUTH_URLS.RESEND_OTP, null, data);
+    const sendOtp = async (data: {phoneNumber?: string}) => {
+        return request(API_METHOD.POST, AUTH_URLS.SEND_OTP, null, data);
     }
 
     const forgotPassword = async (data: {email?: string}) => {
