@@ -74,3 +74,8 @@ export const makeRoute = (
 	return `${generatePath(baseRoute, params ?? {})}${queryString ? `?${queryString}` : ''
 		}`;
 };
+
+export const userNameMaker = (email: string): string => {
+    if (!email) return 'user';
+    return email.split('@')[0].toLowerCase().replace(/[^a-z0-9._-]/g, '') || 'user';
+}

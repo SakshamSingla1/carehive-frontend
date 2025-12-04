@@ -178,21 +178,6 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                     >
                         {isLoading ? "Signing in..." : "Sign In"}
                     </Button>
-
-                    {/* Continue With Google */}
-                    <button
-                        type="button"
-                        className="w-full mt-3 py-3 border border-gray-300 rounded-lg 
-              flex items-center justify-center gap-2 text-gray-800 hover:bg-gray-100 transition"
-                    >
-                        <img
-                            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
-                            alt="Google logo"
-                            width={20}
-                        />
-                        Continue with Google
-                    </button>
-
                     {/* Create New Account */}
                     <div className="text-center mt-5">
                         <p className="text-sm text-gray-600">

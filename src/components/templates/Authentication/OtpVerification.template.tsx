@@ -7,58 +7,113 @@ import { useAuthenticatedUser } from "../../../hooks/useAuthenticatedUser";
 import { useNavigate } from "react-router-dom";
 
 interface OTPVerificationTemplateProps {
-    phoneNumber: string;
+    phoneNumber?: string;
+    email?: string;
     setAuthState: (authState: AUTH_STATE) => void;
+    isRegisterFlow?: boolean;
+    setIsRegisterFlow: (val: boolean) => void;
 }
 
 const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
     phoneNumber,
+    email,
     setAuthState,
+    isRegisterFlow = false,
+    setIsRegisterFlow,
 }) => {
     const authService = useAuthService();
+    const navigate = useNavigate();
+    const { setAuthenticatedUser, setDefaultTheme, setThemes, setNavlinks } = useAuthenticatedUser();
+
     const [otp, setOtp] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [timer, setTimer] = useState(30);
-    const { setAuthenticatedUser, setDefaultTheme, setThemes, setNavlinks } = useAuthenticatedUser();
-    const navigate = useNavigate();
 
+    /* Countdown Timer */
     useEffect(() => {
         if (timer === 0) return;
-        const interval = setInterval(() => setTimer((t) => t - 1), 1000);
-        return () => clearInterval(interval);
+        const id = setInterval(() => setTimer((t) => t - 1), 1000);
+        return () => clearInterval(id);
     }, [timer]);
 
+    /* ---------------------- Handle OTP Verify ---------------------- */
     const handleVerify = async () => {
         if (otp.length < 6) {
-            alert("Please enter a valid OTP");
+            alert("Please enter a valid 6-digit OTP");
             return;
         }
 
         try {
             setIsLoading(true);
 
-            const response = await authService.login({
-                phoneNumber,
-                otp,
-            });
-            if (response.status === HTTP_STATUS.OK) {
-                const user = response.data.data;
-                setAuthenticatedUser({
-                    id: user.id,
-                    email: user.email,
-                    role: user.role,
-                    name: user.name,
-                    username: user.username,
-                    phone: user.phone,
-                    token: user.token,
+            let response;
+
+            if (isRegisterFlow) {
+                // 🔥 Registration → VERIFY ACCOUNT
+                response = await authService.verifyOtp({
+                    email: email || "",
+                    otp,
                 });
-                setDefaultTheme(user.defaultTheme);
-                setThemes(user.themes);
-                setNavlinks(user.navLinks);
-                navigate(`/${user.role}Dashboard`);
+
+                if (response.status === HTTP_STATUS.OK) {
+                    // After verifying account → go to LOGIN
+                    setIsRegisterFlow(false);
+                    setAuthState(AUTH_STATE.LOGIN_WITH_EMAIL);
+                    return;
+                }
+            } else {
+                // 🔥 Login → USE LOGIN API
+                response = await authService.login({
+                    phoneNumber: phoneNumber || "",
+                    otp,
+                });
+
+                if (response.status === HTTP_STATUS.OK) {
+                    const user = response.data.data;
+
+                    // Store logged-in user
+                    setAuthenticatedUser({
+                        id: user.id,
+                        email: user.email,
+                        role: user.role,
+                        name: user.name,
+                        username: user.username,
+                        phone: user.phone,
+                        token: user.token,
+                    });
+
+                    setDefaultTheme(user.defaultTheme);
+                    setThemes(user.themes);
+                    setNavlinks(user.navLinks);
+
+                    navigate(`/${user.role}Dashboard`);
+                }
             }
         } catch (error) {
-            console.error("Login failed:", error);
+            console.error("OTP Verification Failed:", error);
+            alert("Invalid OTP. Please try again.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    /* ---------------------- Handle Resend OTP ---------------------- */
+    const handleResendOtp = async () => {
+        try {
+            setIsLoading(true);
+
+            if (isRegisterFlow) {
+                // Registration → resend OTP to EMAIL
+                await authService.resendOtp({ email: email || "" });
+            } else {
+                // Login → resend OTP to PHONE
+                await authService.sendOtp({ phoneNumber: phoneNumber || "" });
+            }
+
+            setTimer(30);
+        } catch (error) {
+            console.error("Failed to resend OTP:", error);
+            alert("Failed to resend OTP. Please try again.");
         } finally {
             setIsLoading(false);
         }
@@ -69,8 +124,11 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
 
             {/* Back Button */}
             <button
-                onClick={() => setAuthState(AUTH_STATE.LOGIN_WITH_PHONE)}
+                onClick={() =>
+                    setAuthState(isRegisterFlow ? AUTH_STATE.REGISTER : AUTH_STATE.LOGIN_WITH_PHONE)
+                }
                 className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
+                disabled={isLoading}
             >
                 <FiArrowLeft className="text-xl" />
                 Back
@@ -82,10 +140,12 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     <FiShield />
                 </div>
 
-                <h2 className="text-2xl font-bold tracking-tight">Verify OTP</h2>
+                <h2 className="text-2xl font-bold tracking-tight">
+                    {isRegisterFlow ? "Verify Your Account" : "Verify OTP"}
+                </h2>
+
                 <p className="text-gray-600 mt-1">
-                    Enter the OTP sent to{" "}
-                    <span className="font-semibold">{phoneNumber}</span>
+                    OTP sent to <span className="font-semibold">{phoneNumber || email}</span>
                 </p>
             </div>
 
@@ -93,14 +153,15 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
             <div className="flex justify-center mb-4">
                 <input
                     className="
-            text-center text-2xl tracking-widest font-semibold
-            border border-gray-300 rounded-lg p-3 w-48
-            focus:outline-none focus:ring-2 focus:ring-blue-500
-          "
+                        text-center text-2xl tracking-widest font-semibold
+                        border border-gray-300 rounded-lg p-3 w-48
+                        focus:outline-none focus:ring-2 focus:ring-blue-500
+                    "
                     maxLength={6}
                     value={otp}
                     onChange={(e) => setOtp(e.target.value.replace(/\D/g, ""))}
                     placeholder="______"
+                    disabled={isLoading}
                 />
             </div>
 
@@ -110,8 +171,9 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     <p className="text-gray-500">Resend OTP in {timer}s</p>
                 ) : (
                     <button
-                        className="text-blue-600 hover:underline"
-                        onClick={() => setTimer(30)}
+                        className="text-blue-600 hover:underline disabled:opacity-50"
+                        onClick={handleResendOtp}
+                        disabled={isLoading}
                     >
                         Resend OTP
                     </button>
@@ -123,7 +185,7 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                 fullWidth
                 variant="contained"
                 size="large"
-                disabled={isLoading}
+                disabled={isLoading || otp.length < 6}
                 onClick={handleVerify}
                 sx={{
                     mt: 1,
