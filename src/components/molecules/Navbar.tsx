@@ -6,14 +6,14 @@ import { useAuthenticatedUser } from "../../hooks/useAuthenticatedUser";
 import ThemeSwitcher from "./ThemeSwitcher";
 
 const Navbar: React.FC = () => {
-  const { navlinks , logout } = useAuthenticatedUser();
+  const { navlinks, logout } = useAuthenticatedUser();
   const location = useLocation();
   const navigate = useNavigate();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const handleLogout = () => {
     logout();
-    navigate("/login", { replace: true });
+    navigate("/", { replace: true });
   };
 
   if (!navlinks || navlinks.length === 0) return null;
@@ -21,6 +21,12 @@ const Navbar: React.FC = () => {
   const sortedNav = [...navlinks].sort(
     (a, b) => Number(a.index) - Number(b.index)
   );
+
+  // ✅ Ensure dynamic path always becomes absolute (/path)
+  const normalizePath = (path: string) => {
+    if (!path) return "/";
+    return path.startsWith("/") ? path : `/${path}`;
+  };
 
   return (
     <header className="bg-white shadow-md sticky top-0 z-40">
@@ -35,11 +41,13 @@ const Navbar: React.FC = () => {
             {/* Desktop Menu */}
             <nav className="hidden md:flex items-center ml-10 space-x-8">
               {sortedNav.map((nav) => {
-                const active = location.pathname === nav.path;
+                const absolutePath = normalizePath(nav.path);
+                const active = location.pathname === absolutePath;
+
                 return (
                   <Link
                     key={`${nav.roleCode}-${nav.index}`}
-                    to={nav.path}
+                    to={absolutePath}
                     className={`text-sm font-medium pb-1 border-b-2 transition-all ${
                       active
                         ? "border-blue-600 text-blue-700"
@@ -88,17 +96,19 @@ const Navbar: React.FC = () => {
 
         <div className="space-y-3">
           {sortedNav.map((nav) => {
-            const active = location.pathname === nav.path;
+            const absolutePath = normalizePath(nav.path);
+            const active = location.pathname === absolutePath;
+
             return (
               <Link
                 key={`mobile-${nav.roleCode}-${nav.index}`}
-                to={nav.path}
+                to={absolutePath}
+                onClick={() => setMobileOpen(false)}
                 className={`block px-4 py-2 rounded-md text-base font-medium transition ${
                   active
                     ? "bg-blue-100 text-blue-700"
                     : "text-gray-700 hover:bg-gray-100"
                 }`}
-                onClick={() => setMobileOpen(false)}
               >
                 {nav.name}
               </Link>
@@ -125,4 +135,3 @@ const Navbar: React.FC = () => {
 };
 
 export default Navbar;
-
