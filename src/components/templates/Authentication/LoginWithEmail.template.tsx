@@ -60,7 +60,7 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                 setThemes(user.themes);
                 setNavlinks(user.navLinks);
 
-                navigate(`/${user.role}Dashboard`);
+                navigate(`/${user.role}/dashboard`);
             } catch (error) {
                 console.error("Login failed:", error);
             } finally {

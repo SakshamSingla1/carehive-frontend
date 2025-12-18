@@ -79,3 +79,22 @@ export const userNameMaker = (email: string): string => {
     if (!email) return 'user';
     return email.split('@')[0].toLowerCase().replace(/[^a-z0-9._-]/g, '') || 'user';
 }
+
+export const capitalizeFirstLetter = (string: string): string => {
+  return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
+};
+
+export const getBreadcrumbsFromUrl = (pathname: string): Array<{ label: string; path: string }> => {
+  const pathSegments = pathname.split('/').filter(Boolean);
+  const breadcrumbs = [];
+  let currentPath = '';
+  for (const segment of pathSegments) {
+    currentPath = `${currentPath}/${segment}`;
+    const label = segment
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+    breadcrumbs.push({ label, path: currentPath });
+  }
+  return breadcrumbs;
+};
