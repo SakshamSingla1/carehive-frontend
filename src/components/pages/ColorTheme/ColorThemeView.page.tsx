@@ -5,6 +5,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import ColorThemeForm from "../../templates/ColorTheme/ColorThemeForm.template";
 import { FaPalette } from "react-icons/fa";
 import { MODE } from "../../../utils/constant";
+import { ADMIN_ROUTES } from "../../../utils/constant";
+import { makeRoute } from "../../../utils/helper";
 
 const ColorThemeView: React.FC = () => {
     const colorThemeService = useColorThemeService();
@@ -75,7 +77,7 @@ const ColorThemeView: React.FC = () => {
             {/* Footer Buttons */}
             <div className="flex justify-end gap-4 mt-8 pt-6">
                 <button
-                    onClick={() => navigate("/color-theme")}
+                    onClick={() => navigate(makeRoute(ADMIN_ROUTES.COLOR_THEME, {}))}
                     disabled={formik.isSubmitting}
                     className="px-5 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition"
                 >

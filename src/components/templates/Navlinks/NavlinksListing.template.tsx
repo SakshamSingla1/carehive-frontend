@@ -11,6 +11,7 @@ import { type NavlinkResponse, type NavlinkFilterRequest } from "../../../servic
 import { FiEdit, FiEye, FiSearch } from "react-icons/fi";
 import { useRoleService, type RoleResponse } from "../../../services/useRoleService";
 import { HTTP_STATUS } from "../../../utils/types";
+import { ADMIN_ROUTES } from "../../../utils/constant";
 
 interface INavlinkListTableTemplateProps {
     navlinks: NavlinkResponse[];
@@ -39,7 +40,7 @@ const NavlinkListTableTemplate: React.FC<INavlinkListTableTemplateProps> = ({ na
     }
 
     const handleAddNavlink = () => {
-        navigate("/navlinks/create");
+        navigate(makeRoute(ADMIN_ROUTES.NAVLINKS_ADD, {}));
     }
 
     const handleEdit = (role: string, index: string) => {
@@ -48,7 +49,12 @@ const NavlinkListTableTemplate: React.FC<INavlinkListTableTemplateProps> = ({ na
             size: searchParams.get("size") || "",
             search: searchParams.get("search") || "",
         }
-        navigate(makeRoute("/navlinks/:role/:index/edit", { query, params: { role: role, index: index } }));
+        navigate(
+            makeRoute(ADMIN_ROUTES.NAVLINKS_EDIT, {
+                params: { role, index },
+                query: query    
+            })
+        );
     }
 
     const handleView = (role: string, index: string) => {
@@ -57,7 +63,12 @@ const NavlinkListTableTemplate: React.FC<INavlinkListTableTemplateProps> = ({ na
             size: searchParams.get("size") || "",
             search: searchParams.get("search") || "",
         }
-        navigate(makeRoute("/navlinks/:role/:index", { query, params: { role: role, index: index } }));
+        navigate(
+            makeRoute(ADMIN_ROUTES.NAVLINKS_VIEW, {
+                params: { role, index },
+                query: query
+            })
+        );
     }
 
     const Action = (role: string, index: string) => {
