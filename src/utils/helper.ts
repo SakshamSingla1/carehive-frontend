@@ -1,7 +1,5 @@
 import { type ColorTheme } from "../services/useColorThemeService";
 import moment from "moment";
-import { createSearchParams, generatePath } from "react-router-dom";
-import { type MakeRouteParams } from "./types";
 
 export const replaceUrlParams = (
 	url: string,
