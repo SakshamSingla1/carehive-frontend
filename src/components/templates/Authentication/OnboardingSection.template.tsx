@@ -83,7 +83,7 @@ const OnboardingSection = ({ onFlip }: OnboardingSectionProps) => {
       </Fade>
 
       {/* Mobile Only Button → Flip to Login */}
-      <div className="md:hidden w-full absolute bottom-0 left-0 p-4 bg-gradient-to-t from-white/90 to-transparent">
+      <div className="md:hidden w-full absolute bottom-0 left-0 p-4 bg-linear-to-t from-white/90 to-transparent">
         <button
           onClick={onFlip}
           className="w-full py-3 bg-green-600 text-white font-semibold rounded-lg shadow-md
