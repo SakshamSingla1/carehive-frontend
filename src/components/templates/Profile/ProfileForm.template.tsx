@@ -1,6 +1,5 @@
-import React , {useState,useEffect} from "react";
-import { useServicesService } from "../../../services/useServicesService";
-import { type FormikProps, type FormikValues } from "formik";
+import React from "react";
+import { type FormikProps } from "formik";
 import { type UpdateUserProfileDTO } from "../../../services/useAuthService";
 import TextField from "../../atoms/TextField";
 

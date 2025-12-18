@@ -283,7 +283,7 @@ const TableV2: React.FC<TableProps> = ({ schema, records, isRounded = true }) =>
               {schema.columns.map((column, index) => (
                 <th
                   key={index}
-                  className={`px-2 font-medium ${centerColumns.includes(index) ? "!text-center" : "!text-left pl-3"}`}
+                  className={`px-2 font-medium ${centerColumns.includes(index) ? "text-center!" : "text-left! pl-3"}`}
                 >
                   {column.label.split("\n").map((line, i) => <div key={i}>{line}</div>)}
                 </th>
@@ -297,7 +297,7 @@ const TableV2: React.FC<TableProps> = ({ schema, records, isRounded = true }) =>
                 {schema.columns.map((column, colIndex) => (
                   <td
                     key={colIndex}
-                    className={`${classes.cellWrap} ${centerColumns.includes(colIndex) ? "!text-center" : "!text-left pl-3"}`}
+                    className={`${classes.cellWrap} ${centerColumns.includes(colIndex) ? "text-center!" : "text-left! pl-3"}`}
                   >
                     {getCellView(record[colIndex], column)}
                   </td>

@@ -1,4 +1,3 @@
-import React from "react";
 import { useAuthenticatedUser } from "../../../hooks/useAuthenticatedUser";
 import { getColor } from "../../../utils/helper";
 import StatCard from "../../molecules/StatCard";

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import { FiHome, FiUsers, FiSettings, FiChevronLeft, FiChevronRight } from "react-icons/fi";
+import { FiHome,FiChevronLeft, FiChevronRight } from "react-icons/fi";
 import { createUseStyles } from "react-jss";
 import { useAuthenticatedUser } from "../../../hooks/useAuthenticatedUser";
 import { getColor } from "../../../utils/helper";
