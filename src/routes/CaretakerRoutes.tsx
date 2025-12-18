@@ -1,5 +1,4 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Routes } from "react-router-dom";
 
 // import CaretakerDashboardPage from "../components/pages/caretaker/CaretakerDashboard.page";
 // import CaretakerRequestsPage from "../components/pages/caretaker/CaretakerRequests.page";

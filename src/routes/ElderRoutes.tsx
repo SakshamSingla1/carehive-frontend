@@ -1,5 +1,4 @@
-import React from "react";
-import { Route, Routes } from "react-router-dom";
+import { Routes } from "react-router-dom";
 
 // import ElderDashboardPage from "../components/pages/elder/ElderDashboard.page";
 // import BookServicePage from "../components/pages/elder/BookService.page";
