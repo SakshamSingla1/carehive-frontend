@@ -51,6 +51,17 @@ export interface ChangePasswordDTO {
     confirmPassword: string;
 }
 
+export interface UpdateUserProfileDTO {
+    name: string;
+    username: string;
+    email: string;
+    phoneNumber: string;
+    roleCode: string;
+    serviceIds?: string[];
+    documentIds?: string[];
+    caretakerStatus?: string;
+}
+
 export const useAuthService = () => {
     const login = (data: AuthLoginDTO) => {
         localStorage.setItem("reLoginTimestamp", new Date().toISOString());
@@ -94,6 +105,10 @@ export const useAuthService = () => {
         return request(API_METHOD.GET, AUTH_URLS.GET_ME, null);
     }
 
+    const updateCurrentUser = async (data: UpdateUserProfileDTO) => {
+        return request(API_METHOD.PUT, AUTH_URLS.GET_ME, null, data);
+    }
+
     return {
         login,
         register,
@@ -104,6 +119,7 @@ export const useAuthService = () => {
         validateResetToken,
         resetPassword,
         changePassword,
-        getMe
+        getMe,
+        updateCurrentUser
     }
 }
