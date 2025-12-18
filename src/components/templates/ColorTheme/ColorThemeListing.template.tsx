@@ -9,6 +9,7 @@ import { type ColorTheme } from "../../../services/useColorThemeService";
 import { makeRoute, DateUtils } from "../../../utils/helper";
 import { FiEdit, FiEye, FiSearch } from "react-icons/fi";
 import ColorPickerField from "../../atoms/ColorPicker";
+import { ADMIN_ROUTES } from "../../../utils/constant";
 
 interface ColorThemeListingTemplateProps {
     colorThemes: ColorTheme[];
@@ -32,7 +33,11 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
 
     // -------------------- ACTIONS --------------------
     const handleEdit = (role: string, themeName: string) => {
-        navigate(makeRoute(`/color-theme/${role}/${themeName}/edit`, {
+        navigate(makeRoute(ADMIN_ROUTES.COLOR_THEME_EDIT, {
+            params: {
+                role,
+                themeName
+            },
             query: {
                 page: searchParams.get("page") || "0",
                 size: searchParams.get("size") || "10",
@@ -42,7 +47,11 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
     };
 
     const handleView = (role: string, themeName: string) => {
-        navigate(makeRoute(`/color-theme/${role}/${themeName}`, {
+        navigate(makeRoute(ADMIN_ROUTES.COLOR_THEME_VIEW, {
+            params: {
+                role,
+                themeName
+            },
             query: {
                 page: searchParams.get("page") || "0",
                 size: searchParams.get("size") || "10",
@@ -107,7 +116,7 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
             <div className="flex justify-between">
                 <div className="text-2xl font-semibold my-auto">Color Theme List</div>
                 <Button 
-                    onClick={() => navigate("/color-theme/create")}
+                    onClick={() => navigate(makeRoute(ADMIN_ROUTES.COLOR_THEME_ADD, {}))}
                     size="medium"
                     className="ml-4 bg-blue-600 text-white hover:bg-blue-700"
                 >

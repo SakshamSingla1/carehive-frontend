@@ -98,7 +98,7 @@ const ColorThemeForm: React.FC<ColorThemeFormProps> = ({ formik, mode }) => {
                     variant="contained"
                     onClick={addGroup}
                     startIcon={<FiPlus />}
-                    className="!bg-indigo-600 hover:!bg-indigo-700"
+                    className="bg-indigo-600! hover:bg-indigo-700!"
                 >
                     Add Color Group
                 </Button>

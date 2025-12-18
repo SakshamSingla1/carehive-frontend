@@ -66,13 +66,35 @@ export const DateUtils = {
 	},
 };
 
-export const makeRoute = (
-	baseRoute: string,
-	{ params, query }: MakeRouteParams
+// In helper.ts
+export const makeRoute = <T extends Record<string, string | number> = {}>(
+  path: string,
+  options?: {
+    params?: T;
+    query?: Record<string, string | number | boolean | undefined | null>;
+  }
 ): string => {
-	const queryString = createSearchParams(query ?? {});
-	return `${generatePath(baseRoute, params ?? {})}${queryString ? `?${queryString}` : ''
-		}`;
+  // Ensure the path starts with a forward slash
+  let processedPath = path.startsWith('/') ? path : `/${path}`;
+  const { params = {}, query = {} } = options || {};
+
+  // Replace path parameters
+  for (const [key, value] of Object.entries(params)) {
+    if (value !== undefined && value !== null) {
+      processedPath = processedPath.replace(`:${key}`, String(value));
+    }
+  }
+
+  // Handle query parameters
+  const queryParams = new URLSearchParams();
+  for (const [key, value] of Object.entries(query)) {
+    if (value !== undefined && value !== null && value !== '') {
+      queryParams.append(key, String(value));
+    }
+  }
+
+  const queryString = queryParams.toString();
+  return queryString ? `${processedPath}?${queryString}` : processedPath;
 };
 
 export const userNameMaker = (email: string): string => {

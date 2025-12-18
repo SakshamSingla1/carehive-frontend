@@ -14,9 +14,10 @@ import { ArrowBack as ArrowBackIcon } from '@mui/icons-material';
 import { type NavlinkRequest } from '../../../services/useNavlinkService';
 import { useRoleService, type RoleResponse } from '../../../services/useRoleService';
 import { HTTP_STATUS } from '../../../utils/types';
-import { MODE } from '../../../utils/constant';
+import { ADMIN_ROUTES, MODE } from '../../../utils/constant';
 import { useNavigate } from 'react-router-dom';
 import TextField from '../../atoms/TextField';
+import { makeRoute } from '../../../utils/helper';
 
 interface NavlinkFormTemplateProps {
   formik: FormikProps<NavlinkRequest>;
@@ -54,7 +55,7 @@ const NavlinkFormTemplate: React.FC<NavlinkFormTemplateProps> = ({ formik, mode 
     <div className="max-w-3xl mx-auto p-4">
       {/* Back Button */}
       <button
-        onClick={() => navigate("/navlinks")}
+        onClick={() => navigate(makeRoute(ADMIN_ROUTES.NAVLINKS,{}))}
         className="group flex items-center text-blue-600 hover:text-blue-800 transition mb-6"
       >
         <ArrowBackIcon className="mr-1 group-hover:-translate-x-1 transition" />
@@ -160,7 +161,7 @@ const NavlinkFormTemplate: React.FC<NavlinkFormTemplateProps> = ({ formik, mode 
         <div className="flex justify-end space-x-4 mt-10">
           <Button
             variant="outlined"
-            onClick={() => navigate("/navlinks")}
+            onClick={() => navigate(makeRoute(ADMIN_ROUTES.NAVLINKS,{}))}
             disabled={isSubmitting}
             className="px-6 py-2"
           >

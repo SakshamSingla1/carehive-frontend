@@ -25,7 +25,9 @@ const TemplateListTableTemplate: React.FC<TemplateListTableTemplateProps> = ({ t
     const [searchParams] = useSearchParams();
     
     const handleAddTemplate = () => {
-        navigate(makeRoute(ADMIN_ROUTES.TEMPLATES_ADD,{}));
+        navigate(makeRoute(
+            ADMIN_ROUTES.TEMPLATES_ADD,{}
+        ));
     }
 
     const handleEdit = (name: string) => {
