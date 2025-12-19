@@ -1,4 +1,4 @@
-import { Button, ToggleButton, ToggleButtonGroup } from "@mui/material";
+import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import TextField from "../../atoms/TextField";
 import {
   type AuthLoginDTO,
@@ -6,12 +6,14 @@ import {
 } from "../../../services/useAuthService";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { useState } from "react";
-import { FiLock } from "react-icons/fi";
+import { FiLock, FiMail, FiPhone } from "react-icons/fi";
 import { AUTH_STATE, HTTP_STATUS } from "../../../utils/types";
+import Button from "../../atoms/Button";
+import { useState } from "react";
+import { InputAdornment } from "@mui/material";
 
 interface LoginWithPhoneProps {
-    setPhoneNumber: (phoneNumber: string) => void;
+  setPhoneNumber: (phoneNumber: string) => void;
   setAuthState: (authState: AUTH_STATE) => void;
   setIsRegisterFlow: (isRegisterFlow: boolean) => void;
 }
@@ -26,7 +28,8 @@ const validationSchema = Yup.object({
 /* ---------------------- Login Component ---------------------- */
 const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneNumber, setIsRegisterFlow }) => {
   const authService = useAuthService();
-  const [isLoading, setIsLoading] = useState(false);
+
+  const [isLoading,setIsLoading ] = useState<boolean>(false);
 
   const formik = useFormik<AuthLoginDTO>({
     initialValues: {
@@ -36,13 +39,14 @@ const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneN
     onSubmit: async (values) => {
       try {
         setIsLoading(true);
-
         const response = await authService.sendOtp(values);
         if (response.status === HTTP_STATUS.OK) {
           setPhoneNumber(String(values.phoneNumber));
           setIsRegisterFlow(false);
           setAuthState(AUTH_STATE.OTP_VERIFICATION);
         }
+      } catch(err) {
+        console.error(err);
       } finally {
         setIsLoading(false);
       }
@@ -59,13 +63,14 @@ const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneN
             <FiLock />
           </div>
 
-          <h2 className="text-2xl font-bold tracking-tight">
+          <h2 className="text-2xl text-green-800 font-bold tracking-tight">
             Sign in with Phone
           </h2>
 
           {/* Toggle Button Group */}
           <div className="mt-6 flex justify-center">
             <ToggleButtonGroup
+              fullWidth
               exclusive
               value="phone"
               onChange={(_event, value) => {
@@ -76,69 +81,71 @@ const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneN
               sx={{
                 backgroundColor: "#f3f4f6",
                 padding: "4px",
-                borderRadius: "9999px",
+                borderRadius: "12px",
                 "& .MuiToggleButton-root": {
                   border: "none",
-                  borderRadius: "9999px",
-                  padding: "8px 22px",
+                  borderRadius: "8px",
+                  padding: "10px 16px",
                   fontSize: "0.95rem",
                   textTransform: "none",
-                  fontWeight: 600,
+                  fontWeight: 500,
                   color: "#4b5563",
-                },
-                "& .Mui-selected": {
-                  backgroundColor: "#10b981 !important",
-                  color: "white !important",
-                  boxShadow: "0 2px 6px rgba(16,185,129,0.5)",
+                  "&.Mui-selected": {
+                    backgroundColor: "white",
+                    color: "#10b981",
+                    boxShadow: "0 2px 8px rgba(16, 185, 129, 0.2)",
+                  }
                 },
               }}
             >
-              <ToggleButton value="email">Login with Email</ToggleButton>
-              <ToggleButton value="phone">Login with Phone</ToggleButton>
+              <ToggleButton value="email" className="flex items-center gap-2">
+                <FiMail size={18} /> Email
+              </ToggleButton>
+              <ToggleButton value="phone" className="flex items-center gap-2">
+                <FiPhone size={18} /> Phone
+              </ToggleButton>
             </ToggleButtonGroup>
           </div>
         </div>
 
         {/* ------------------ Phone Login Form ------------------ */}
-        <div>
+        <div className="flex flex-col gap-y-8">
           <TextField
-            margin="normal"
             fullWidth
-            id="phoneNumber"
             name="phoneNumber"
             label="Phone Number"
             value={formik.values.phoneNumber}
             onChange={formik.handleChange}
             onBlur={formik.handleBlur}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <div className="flex items-center gap-4">
+                    <FiPhone className="text-gray-400" /> +91
+                  </div>
+                </InputAdornment>
+              ),
+            }}
             error={formik.touched.phoneNumber && Boolean(formik.errors.phoneNumber)}
             helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
           />
 
           {/* Continue Button */}
-          <Button
-            fullWidth
-            variant="contained"
-            disabled={isLoading}
-            size="large"
-            onClick={() => formik.handleSubmit()}
-            sx={{
-              mt: 3,
-              mb: 1,
-              py: 1.5,
-              borderRadius: 2,
-              textTransform: "none",
-              fontSize: "1rem",
-            }}
-          >
-            {isLoading ? "Sending OTP..." : "Send OTP"}
-          </Button>
-
+          <div className="flex justify-center items-center">
+            <Button
+              variant="primaryContained"
+              size="large"
+              onClick={() => formik.handleSubmit()}
+              label="Send OTP"
+              disabled={isLoading || !formik.values.phoneNumber}
+            />
+          </div>
           {/* Create New Account */}
           <div className="text-center mt-5">
             <p className="text-sm text-gray-600">
               Don’t have an account?{" "}
               <span
-                className="text-blue-600 cursor-pointer font-medium hover:underline"
+                className=" cursor-pointer text-green-600 font-medium hover:underline"
                 onClick={() => setAuthState(AUTH_STATE.REGISTER)}
               >
                 Create one

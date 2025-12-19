@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Button } from "@mui/material";
 import { AUTH_STATE, HTTP_STATUS } from "../../../utils/types";
 import { FiArrowLeft, FiShield } from "react-icons/fi";
 import { useAuthService } from "../../../services/useAuthService";
 import { useAuthenticatedUser } from "../../../hooks/useAuthenticatedUser";
 import { useNavigate } from "react-router-dom";
+import Button from "../../atoms/Button";
 
 interface OTPVerificationTemplateProps {
     phoneNumber?: string;
@@ -86,7 +86,7 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     setThemes(user.themes);
                     setNavlinks(user.navLinks);
 
-                    navigate(`/${user.role}Dashboard`);
+                    navigate(`/${user.role.toLowerCase()}/dashboard`);
                 }
             }
         } catch (error) {
@@ -127,7 +127,7 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                 onClick={() =>
                     setAuthState(isRegisterFlow ? AUTH_STATE.REGISTER : AUTH_STATE.LOGIN_WITH_PHONE)
                 }
-                className="flex items-center gap-2 text-gray-600 hover:text-gray-800 mb-4"
+                className="flex items-center gap-2 text-green-600 hover:text-green-700 mb-4"
                 disabled={isLoading}
             >
                 <FiArrowLeft className="text-xl" />
@@ -136,7 +136,7 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
 
             {/* Header */}
             <div className="text-center mb-6 flex flex-col items-center">
-                <div className="p-3 rounded-full bg-blue-100 text-blue-600 text-3xl flex items-center justify-center mb-3 shadow-sm">
+                <div className="p-3 rounded-full bg-green-100 text-green-600 text-3xl flex items-center justify-center mb-3 shadow-sm">
                     <FiShield />
                 </div>
 
@@ -154,8 +154,8 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                 <input
                     className="
                         text-center text-2xl tracking-widest font-semibold
-                        border border-gray-300 rounded-lg p-3 w-48
-                        focus:outline-none focus:ring-2 focus:ring-blue-500
+                        border border-green-300 rounded-lg p-3 w-48
+                        focus:outline-none focus:ring-2 focus:ring-green-500
                     "
                     maxLength={6}
                     value={otp}
@@ -171,7 +171,7 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     <p className="text-gray-500">Resend OTP in {timer}s</p>
                 ) : (
                     <button
-                        className="text-blue-600 hover:underline disabled:opacity-50"
+                        className="text-green-600 hover:underline disabled:opacity-50"
                         onClick={handleResendOtp}
                         disabled={isLoading}
                     >
@@ -180,24 +180,15 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                 )}
             </div>
 
-            {/* Verify Button */}
-            <Button
-                fullWidth
-                variant="contained"
-                size="large"
-                disabled={isLoading || otp.length < 6}
-                onClick={handleVerify}
-                sx={{
-                    mt: 1,
-                    mb: 2,
-                    py: 1.5,
-                    borderRadius: 2,
-                    textTransform: "none",
-                    fontSize: "1rem",
-                }}
-            >
-                {isLoading ? "Verifying..." : "Verify OTP"}
-            </Button>
+            <div className="flex justify-center items-center">
+                <Button
+                    label="Verify OTP"
+                    variant="primaryContained"
+                    disabled={isLoading || otp.length < 6}
+                    onClick={handleVerify}
+                    className="w-1/2"
+                />
+            </div>
         </div>
     );
 };

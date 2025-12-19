@@ -182,15 +182,15 @@ const Button: React.FC<ButtonProps> = ({
   const { defaultTheme } = useAuthenticatedUser();
 
   const colors = {
-    primary300: getColor(defaultTheme, "primary300") ?? "#3498db",
-    neutral50: getColor(defaultTheme, "neutral50") ?? "#FAFAFA",
-    neutral200: getColor(defaultTheme, "neutral200") ?? "#eeeeee",
-    neutral400: getColor(defaultTheme, "neutral400") ?? "#aaaaaa",
-    neutral700: getColor(defaultTheme, "neutral700") ?? "#555",
-    neutral900: getColor(defaultTheme, "neutral900") ?? "#222",
-    secondary50: getColor(defaultTheme, "secondary50") ?? "#FFFDE7",
-    secondary200: getColor(defaultTheme, "secondary200") ?? "#FFECB3",
-    secondary400: getColor(defaultTheme, "secondary400") ?? "#FFC107",
+    primary300: getColor(defaultTheme, "primary300") || "#10b981",
+    neutral50: getColor(defaultTheme, "neutral50") || "#FAFAFA",
+    neutral200: getColor(defaultTheme, "neutral200") || "#eeeeee",
+    neutral400: getColor(defaultTheme, "neutral400") || "#aaaaaa",
+    neutral700: getColor(defaultTheme, "neutral700") || "#555",
+    neutral900: getColor(defaultTheme, "neutral900") || "#222",
+    secondary50: getColor(defaultTheme, "secondary50") || "#FFFDE7",
+    secondary200: getColor(defaultTheme, "secondary200") || "#FFECB3",
+    secondary400: getColor(defaultTheme, "secondary400") || "#FFC107",
   };
 
   const styles = useStyles(colors);
