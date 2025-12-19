@@ -1,5 +1,6 @@
 import { request } from "."
 import { API_METHOD } from "../utils/constant";
+import { useAuthenticatedUser } from "../hooks/useAuthenticatedUser";
 
 export const AUTH_URLS = {
     REGISTER: "auth/register",
@@ -63,6 +64,8 @@ export interface UpdateUserProfileDTO {
 }
 
 export const useAuthService = () => {
+    const { user } = useAuthenticatedUser();
+
     const login = (data: AuthLoginDTO) => {
         localStorage.setItem("reLoginTimestamp", new Date().toISOString());
         sessionStorage.removeItem("sessionHandled");
@@ -102,11 +105,11 @@ export const useAuthService = () => {
     }
 
     const getMe = async () => {
-        return request(API_METHOD.GET, AUTH_URLS.GET_ME, null);
+        return request(API_METHOD.GET, AUTH_URLS.GET_ME, user);
     }
 
     const updateCurrentUser = async (data: UpdateUserProfileDTO) => {
-        return request(API_METHOD.PUT, AUTH_URLS.GET_ME, null, data);
+        return request(API_METHOD.PUT, AUTH_URLS.GET_ME, user, data);
     }
 
     return {
