@@ -47,7 +47,7 @@ const AuthenticationTemplate: React.FC<AuthenticationTemplateProps> = ({
   const showOnboarding = isDesktopView || isOnboardingVisible;
 
   return (
-    <div className={classes.background}>
+    <div className={`${classes.background} shadow-xl `}>
       <div
         className={`relative z-10 h-full w-full flex md:w-9/12 md:h-5/6 mx-auto 
         ${isDesktopView ? "flex-row" : "flex-col items-center justify-center"}`}
@@ -55,7 +55,7 @@ const AuthenticationTemplate: React.FC<AuthenticationTemplateProps> = ({
         {/* ================= MOBILE — CARD VIEW ONBOARDING ================= */}
         {!isDesktopView && showOnboarding && (
           <div className="w-full flex justify-center items-center">
-            <div className="w-full bg-white rounded-2xl shadow-xl p-6">
+            <div className="w-full bg-white rounded-2xl p-6">
               <OnboardingSection onFlip={onFlip} />
             </div>
           </div>
@@ -72,7 +72,7 @@ const AuthenticationTemplate: React.FC<AuthenticationTemplateProps> = ({
         {!(!isDesktopView && showOnboarding) && (
           <div
             className={`
-              bg-white text-textSecondary shadow-xl
+              bg-white text-textSecondary
               ${isDesktopView
                 ? "w-full h-full rounded-tr-3xl rounded-br-3xl flex items-center justify-center p-10"
                 : "w-full rounded-2xl p-6"

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Select as MuiSelect, MenuItem, type SelectProps as MuiSelectProps } from "@mui/material";
 import { createUseStyles } from "react-jss";
 import { capitalizeFirstLetter, getColor } from "../../utils/helper";
-import { FaChevronDown,FaChevronUp } from "react-icons/fa";
+import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { useAuthenticatedUser } from "../../hooks/useAuthenticatedUser";
 
 interface Option {
@@ -17,6 +17,7 @@ interface SelectProps extends Omit<MuiSelectProps, "label"> {
   isRequired?: boolean;
   isCapitalized?: boolean;
   placeholder?: string;
+  InputProps?: any; // Add this line
 }
 
 const useStyles = createUseStyles({
@@ -29,15 +30,14 @@ const useStyles = createUseStyles({
 
   input: (colors: any) => ({
     border: `1px solid ${colors.neutral200}`,
-    fontSize: "14px",
+    fontSize: "16px",
     fontWeight: 400,
-    borderRadius: 4,
-    lineHeight: "18px",
+    borderRadius: "12px",
+    lineHeight: "24px",
     backgroundColor: "white",
 
     "&:hover": {
       borderColor: colors.primary300,
-      borderWidth: 1,
       outline: "none",
     },
 
@@ -49,7 +49,7 @@ const useStyles = createUseStyles({
 
     "& .MuiInputBase-input": {
       lineHeight: "18px",
-      padding: "8px 12px",
+      padding: "13px 12px",
     },
 
     "&:focus-within": {
@@ -97,10 +97,36 @@ const useStyles = createUseStyles({
     pointerEvents: "none",
     transition: "transform 0.3s ease",
   },
-
-  iconOpen: {
-    transform: "translateY(-50%) rotate(180deg)",
-  },
+  menuPaper: (colors: any) => ({
+    marginTop: '4px',
+    borderRadius: '8px',
+    boxShadow: '0 4px 20px rgba(0, 0, 0, 0.08)',
+    border: `1px solid ${colors.neutral200}`,
+    '& .MuiMenuItem-root': {
+      fontSize: '14px',
+      padding: '10px 16px',
+      color: colors.neutral900,
+      '&:hover': {
+        backgroundColor: colors.primary50,
+        color: colors.primary300,
+      },
+      '&.Mui-selected': {
+        backgroundColor: `${colors.primary50} !important`,
+        color: colors.primary300,
+        '&:hover': {
+          backgroundColor: `${colors.primary100} !important`,
+        }
+      },
+      '&:first-child': {
+        borderTopLeftRadius: '8px',
+        borderTopRightRadius: '8px',
+      },
+      '&:last-child': {
+        borderBottomLeftRadius: '8px',
+        borderBottomRightRadius: '8px',
+      }
+    }
+  }),
 });
 
 const Select: React.FC<SelectProps> = ({
@@ -110,32 +136,32 @@ const Select: React.FC<SelectProps> = ({
   isRequired,
   isCapitalized,
   placeholder,
+  InputProps,
   ...props
 }) => {
   const { defaultTheme } = useAuthenticatedUser();
 
   // Map backend palette → easy variables (mirrors TextField)
   const colors = {
-    primary300: getColor(defaultTheme, "primary300") ?? "#3498db",
-    neutral50: getColor(defaultTheme, "neutral50") ?? "#FAFAFA",
-    neutral200: getColor(defaultTheme, "neutral200") ?? "#eeeeee",
-    neutral400: getColor(defaultTheme, "neutral400") ?? "#aaaaaa",
-    neutral700: getColor(defaultTheme, "neutral700") ?? "#555",
-    neutral900: getColor(defaultTheme, "neutral900") ?? "#222",
+    primary300: getColor(defaultTheme, "primary300") || "#10b981",
+    neutral50: getColor(defaultTheme, "neutral50") || "#FAFAFA",
+    neutral200: getColor(defaultTheme, "neutral200") || "#eeeeee",
+    neutral400: getColor(defaultTheme, "neutral400") || "#aaaaaa",
+    neutral700: getColor(defaultTheme, "neutral700") || "#555",
+    neutral900: getColor(defaultTheme, "neutral900") || "#222",
 
-    secondary50: getColor(defaultTheme, "secondary50") ?? "#FFFDE7",
-    secondary200: getColor(defaultTheme, "secondary200") ?? "#FFECB3",
-    secondary400: getColor(defaultTheme, "secondary400") ?? "#FFC107",
+    secondary50: getColor(defaultTheme, "secondary50") || "#FFFDE7",
+    secondary200: getColor(defaultTheme, "secondary200") || "#FFECB3",
+    secondary400: getColor(defaultTheme, "secondary400") || "#FFC107",
   };
 
   const classes = useStyles(colors);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
 
   return (
     <div
-      className={`flex flex-col w-full relative gap-2 ${
-        props.disabled ? "pointer-events-none select-none" : ""
-      }`}
+      className={`flex flex-col w-full relative ${props.disabled ? "pointer-events-none select-none" : ""
+        }`}
     >
       {label && (
         <div className={classes.label}>
@@ -154,10 +180,10 @@ const Select: React.FC<SelectProps> = ({
         IconComponent={(iconProps) => (
           open ? <FaChevronDown
             {...iconProps}
-            className={`${classes.icon} ${open ? classes.iconOpen : ""}`}
+            className={`${classes.icon}`}
           /> : <FaChevronUp
             {...iconProps}
-            className={`${classes.icon} ${open ? classes.iconOpen : ""}`}
+            className={`${classes.icon}`}
           />
         )}
         displayEmpty
@@ -194,9 +220,34 @@ const Select: React.FC<SelectProps> = ({
 
           return "";
         }}
+        MenuProps={{
+          classes: { paper: classes.menuPaper },
+          anchorOrigin: { vertical: 'bottom', horizontal: 'left' },
+          transformOrigin: { vertical: 'top', horizontal: 'left' },
+          PaperProps: {
+            style: {
+              maxHeight: 300,
+            }
+          }
+        }}
+        inputProps={{
+          ...props.inputProps,
+          className: `${props.inputProps?.className || ''} pl-10`, // Add padding for the icon
+        }}
+        // Add InputProps with startAdornment
+        startAdornment={InputProps?.startAdornment}
       >
+        {placeholder && (
+          <MenuItem value="" disabled>
+            {placeholder}
+          </MenuItem>
+        )}
         {options?.map((option: Option) => (
-          <MenuItem key={option.value} value={option.value} className="capitalize">
+          <MenuItem
+            key={option.value}
+            value={option.value}
+            className="transition-colors duration-200 hover:bg-primary-50"
+          >
             {option.label}
           </MenuItem>
         ))}

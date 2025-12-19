@@ -121,7 +121,7 @@ const TextField = styled((props: TextFieldProps) => {
 
     // Map backend palette → easy variables
     const colors = {
-        primary300: getColor(defaultTheme, "primary300") ?? "#3498db",
+        primary300: getColor(defaultTheme, "primary300") ?? "#10b981",
         neutral50: getColor(defaultTheme, "neutral50") ?? "#FAFAFA",
         neutral200: getColor(defaultTheme, "neutral200") ?? "#eeeeee",
         neutral400: getColor(defaultTheme, "neutral400") ?? "#aaaaaa",
@@ -137,7 +137,7 @@ const TextField = styled((props: TextFieldProps) => {
 
     return (
         <div
-            className={`flex flex-col gap-1 w-auto relative ${
+            className={`flex flex-col w-auto relative ${
                 props.disabled ? "pointer-events-none select-none" : ""
             }`}
         >
