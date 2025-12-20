@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import DashboardLayout from "./layouts/Dashboard.layout";
 import AdminRoutes from "./routes/AdminRoutes";
 import ElderRoutes from "./routes/ElderRoutes";
+import CaretakerRoutes from "./routes/CaretakerRoutes";
 import Authentication from "./components/pages/Authentication/Authentication.page";
 import { SnackbarProvider } from "./contexts/SnackbarContext";
 
@@ -57,6 +58,15 @@ function App() {
             element={
               <ProtectedRoute>
                 <ElderRoutes />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/caretaker/*"
+            element={
+              <ProtectedRoute>
+                <CaretakerRoutes />
               </ProtectedRoute>
             }
           />

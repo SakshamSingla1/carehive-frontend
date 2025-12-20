@@ -47,7 +47,6 @@ export interface PasswordResetConfirmDTO {
 }
 
 export interface ChangePasswordDTO {
-    userId: string;
     oldPassword: string;
     newPassword: string;
     confirmPassword: string;
@@ -100,7 +99,7 @@ export const useAuthService = () => {
     }
 
     const changePassword = async (data: ChangePasswordDTO) => {
-        return request(API_METHOD.POST, AUTH_URLS.CHANGE_PASSWORD, null, data);
+        return request(API_METHOD.PUT, AUTH_URLS.CHANGE_PASSWORD, user, data);
     }
 
     const getMe = async () => {

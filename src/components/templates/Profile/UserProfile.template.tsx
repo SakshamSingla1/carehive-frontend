@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useAuthenticatedUser } from "../../../hooks/useAuthenticatedUser";
 import { getColor, makeRoute } from "../../../utils/helper";
 import {
@@ -14,10 +14,16 @@ import { useNavigate } from "react-router-dom";
 import { ADMIN_ROUTES, ROLES } from "../../../utils/constant";
 import { VERIFICATION_STATUS } from "../../../utils/types";
 import Button from "../../atoms/Button";
+import ChangePasswordPopup from "../../popups/ChangePassword.popup";
 
 const UserProfileTemplate: React.FC = () => {
     const { user, defaultTheme } = useAuthenticatedUser();
     const navigate = useNavigate();
+    const [openChangePassword, setOpenChangePassword] = useState<boolean>(false);
+
+    const onClose = () => {
+        setOpenChangePassword(false);
+    };
 
     if (!user) {
         return (
@@ -88,7 +94,6 @@ const UserProfileTemplate: React.FC = () => {
         );
     };
 
-    /* -------------------- GLASS CARD -------------------- */
     const GlassCard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
         <div
             className="relative rounded-4xl border p-10 backdrop-blur-3xl"
@@ -215,7 +220,7 @@ const UserProfileTemplate: React.FC = () => {
                                     status={user.verified}
                                     label={user.verified || "Unverified"}
                                 />
-                                { user.role === ROLES.CARETAKER && <StatusPill
+                                {user.role === ROLES.CARETAKER && <StatusPill
                                     status={user.caretakerStatus}
                                     label={user.caretakerStatus || "Unverified"}
                                 />}
@@ -244,8 +249,13 @@ const UserProfileTemplate: React.FC = () => {
                 <Button
                     label={"Change Password"}
                     variant="secondaryContained"
+                    onClick={() => setOpenChangePassword(true)}
                 />
             </div>
+            <ChangePasswordPopup
+                open={openChangePassword}
+                onClose={onClose}
+            />
         </div>
     );
 };
