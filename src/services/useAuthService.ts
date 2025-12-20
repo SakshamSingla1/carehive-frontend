@@ -13,6 +13,7 @@ export const AUTH_URLS = {
     RESET_PASSWORD : "auth/reset-password",
     CHANGE_PASSWORD : "auth/change-password",
     GET_ME : "auth/me",   
+    UPDATE_USER : "auth/update",
 }
 
 export interface AuthRegisterDTO {
@@ -58,8 +59,6 @@ export interface UpdateUserProfileDTO {
     email: string;
     phoneNumber: string;
     roleCode: string;
-    serviceIds?: string[];
-    documentIds?: string[];
     caretakerStatus?: string;
 }
 
@@ -109,7 +108,7 @@ export const useAuthService = () => {
     }
 
     const updateCurrentUser = async (data: UpdateUserProfileDTO) => {
-        return request(API_METHOD.PUT, AUTH_URLS.GET_ME, user, data);
+        return request(API_METHOD.PUT, AUTH_URLS.UPDATE_USER, user, data);
     }
 
     return {

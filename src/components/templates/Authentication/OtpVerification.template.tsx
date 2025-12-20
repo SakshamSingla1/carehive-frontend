@@ -80,6 +80,8 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                         username: user.username,
                         phone: user.phone,
                         token: user.token,
+                        verified: user.verified,
+                        caretakerStatus: user.caretakerStatus,
                     });
 
                     setDefaultTheme(user.defaultTheme);

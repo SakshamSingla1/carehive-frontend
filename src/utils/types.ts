@@ -36,3 +36,11 @@ export const AUTH_STATE = {
 } as const;
 
 export type AUTH_STATE = typeof AUTH_STATE[keyof typeof AUTH_STATE];
+
+export const VERIFICATION_STATUS = {
+    PENDING: "PENDING",
+    VERIFIED: "VERIFIED",
+    REJECTED: "REJECTED"
+} as const;
+
+export type VERIFICATION_STATUS = typeof VERIFICATION_STATUS[keyof typeof VERIFICATION_STATUS];
