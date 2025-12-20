@@ -160,7 +160,7 @@ tertiaryText: (colors: any) => ({
 });
 
 interface ButtonProps extends Omit<MuiButtonProps, "variant" | "size"> {
-  variant?: CustomVariant;
+  variant: CustomVariant;
   label?: string | React.ReactNode;
   isLoading?: boolean;
   iconButton?: React.ReactNode;

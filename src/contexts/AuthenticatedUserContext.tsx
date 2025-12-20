@@ -14,6 +14,8 @@ export interface AuthenticatedUserType {
     email: string;
     role: string;
     token: string;
+    verified: string;
+    caretakerStatus: string;
 }
 
 // ---------------- CONTEXT TYPES ----------------

@@ -26,6 +26,11 @@ export interface ServiceResponse {
     updatedAt?: string | null;
 }
 
+export interface AssignServiceRequest {
+    serviceIds: string[];
+    status: string;
+}
+
 export const useServicesService = () => {
     const getServices = async () => {
         return request(API_METHOD.GET, SERVICES_URLS.GET_SERVICES, null);
@@ -47,11 +52,16 @@ export const useServicesService = () => {
         return request(API_METHOD.DELETE, replaceUrlParams(SERVICES_URLS.GET_SERVICE_BY_ID, { id }), null);
     };
 
+    const assignService = async (caretakerId: string, data: AssignServiceRequest) => {
+        return request(API_METHOD.PUT, replaceUrlParams(SERVICES_URLS.ASSIGN_SERVICE, { caretakerId }), null, data);
+    };
+
     return {
         getServices,
         getServiceById,
         createService,
         updateService,
         deleteService,
+        assignService,
     }
 }
