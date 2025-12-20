@@ -75,8 +75,6 @@ const UserProfileEditPage: React.FC = () => {
     },
   });
 
-  /* ------------------------------ LOAD USER ------------------------------ */
-
   const loadUser = async () => {
     try {
       const response = await authService.getMe();
