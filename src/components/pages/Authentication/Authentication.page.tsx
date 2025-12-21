@@ -12,7 +12,6 @@ import RegistrationTemplate from "../../templates/Authentication/Registration.te
 
 const Authentication: React.FC = () => {
   const [authState, setAuthState] = useState<AUTH_STATE | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [searchParams] = useSearchParams();
 
   const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
@@ -36,8 +35,6 @@ const Authentication: React.FC = () => {
       setAuthState(nextState);
     } catch {
       setAuthState(AUTH_STATE.LOGIN_WITH_EMAIL);
-    } finally {
-      setIsLoading(false);
     }
   }, [searchParams]);
 
