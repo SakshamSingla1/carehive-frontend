@@ -3,13 +3,13 @@ import { type ColumnType } from "../../atoms/Table";
 import { type IPagination } from "../../../utils/types";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { DateUtils, makeRoute } from "../../../utils/helper";
-import { Button } from "@mui/material";
 import TextField from "../../atoms/TextField";
 import { InputAdornment } from '@mui/material';
 import Table from "../../atoms/Table";
 import { type TemplateResponse, type TemplateFilterRequest } from "../../../services/useTemplateService";
 import { FiEdit, FiEye, FiSearch } from "react-icons/fi";
 import { ADMIN_ROUTES } from "../../../utils/constant";
+import Button from "../../atoms/Button";
 
 interface TemplateListTableTemplateProps {
     templates: TemplateResponse[];
@@ -100,13 +100,11 @@ const TemplateListTableTemplate: React.FC<TemplateListTableTemplateProps> = ({ t
         <div className="grid gap-y-4">
             <div className='flex justify-between'>
                 <div className={`text-2xl font-semibold my-auto`}>Template List</div>
-                <Button
-                    variant="contained"
+                <Button 
                     onClick={handleAddTemplate}
-                    aria-label="Add Template"
-                >
-                    Add Template
-                </Button>
+                    variant="primaryContained"
+                    label="Add New Template"
+                />
             </div>
             <div className='flex justify-between'>
                 <div className={`w-[250px]`}>

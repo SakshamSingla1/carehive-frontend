@@ -1,15 +1,15 @@
-import React, { useState } from "react";
+import React from "react";
 import { type ColumnType } from "../../atoms/Table";
 import { type IPagination } from "../../../utils/types";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import TextField from "../../atoms/TextField";
-import { Button, InputAdornment } from "@mui/material";
+import { InputAdornment } from "@mui/material";
 import Table from "../../atoms/Table";
 import { type ColorTheme } from "../../../services/useColorThemeService";
 import { makeRoute, DateUtils } from "../../../utils/helper";
 import { FiEdit, FiEye, FiSearch } from "react-icons/fi";
-import ColorPickerField from "../../atoms/ColorPicker";
 import { ADMIN_ROUTES } from "../../../utils/constant";
+import Button from "../../atoms/Button";
 
 interface ColorThemeListingTemplateProps {
     colorThemes: ColorTheme[];
@@ -29,7 +29,6 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
 
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const [selectedColor, setSelectedColor] = useState("#aabbcc");
 
     // -------------------- ACTIONS --------------------
     const handleEdit = (role: string, themeName: string) => {
@@ -117,15 +116,13 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
                 <div className="text-2xl font-semibold my-auto">Color Theme List</div>
                 <Button 
                     onClick={() => navigate(makeRoute(ADMIN_ROUTES.COLOR_THEME_ADD, {}))}
-                    size="medium"
-                    className="ml-4 bg-blue-600 text-white hover:bg-blue-700"
-                >
-                    Add New
-                </Button>
+                    variant="primaryContained"
+                    label="Add New Color Theme"
+                />
             </div>
 
             {/* -------------------- SEARCH BAR -------------------- */}
-            <div className="flex justify-between">
+            <div className="flex justify-end">
                 <div className="w-[250px]">
                     <TextField
                         variant="outlined"
@@ -140,13 +137,6 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
                                 </InputAdornment>
                             ),
                         }}
-                    />
-                </div>
-
-                <div>
-                    <ColorPickerField 
-                        value={selectedColor}
-                        onChange={(color) => setSelectedColor(color)}
                     />
                 </div>
             </div>

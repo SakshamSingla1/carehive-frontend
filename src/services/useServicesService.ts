@@ -8,6 +8,13 @@ export const SERVICES_URLS = {
     ASSIGN_SERVICE: "services/assign/:caretakerId",
 }
 
+export interface ServiceFilterRequest {
+    page: string;
+    size: string;
+    sort?: string;
+    search?: string;
+}
+
 export interface ServiceRequest {
     id?: string;
     name?: string;
@@ -32,8 +39,8 @@ export interface AssignServiceRequest {
 }
 
 export const useServicesService = () => {
-    const getServices = async () => {
-        return request(API_METHOD.GET, SERVICES_URLS.GET_SERVICES, null);
+    const getAllServices = async (filters: ServiceFilterRequest) => {
+        return request(API_METHOD.GET, SERVICES_URLS.GET_SERVICES, null, null, { params: filters });
     }
 
     const getServiceById = async (id: string) => {
@@ -57,7 +64,7 @@ export const useServicesService = () => {
     };
 
     return {
-        getServices,
+        getAllServices,
         getServiceById,
         createService,
         updateService,
