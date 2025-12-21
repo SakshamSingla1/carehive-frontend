@@ -15,6 +15,7 @@ import {
   useAuthService,
   type UpdateUserProfileDTO,
 } from "../../../services/useAuthService";
+import { useSnackbar } from "../../../hooks/useSnackbar";
 
 /* ----------------------------- FORM STATES ----------------------------- */
 
@@ -37,6 +38,7 @@ const validationSchema = Yup.object({
 
 const UserProfileEditPage: React.FC = () => {
   const navigate = useNavigate();
+  const { showSnackbar } = useSnackbar();
 
   const authService = useAuthService();
   const [activeStep, setActiveStep] = useState<number>(
@@ -64,13 +66,14 @@ const UserProfileEditPage: React.FC = () => {
           phoneNumber: values.phoneNumber,
           roleCode: values.roleCode
         };
-
         const response = await authService.updateCurrentUser(payload);
         if (response.status === HTTP_STATUS.OK) {
           navigate(makeRoute(ADMIN_ROUTES.USER_PROFILE, {}));
+          showSnackbar('success', 'Profile updated successfully');
         }
       } catch (error) {
         console.error("Error updating profile:", error);
+        showSnackbar('error', 'Failed to update profile');
       }
     },
   });
@@ -90,6 +93,7 @@ const UserProfileEditPage: React.FC = () => {
       }
     } catch (error) {
       console.error("Error loading user data:", error);
+      showSnackbar('error', 'Failed to load user data');
     }
   };
 

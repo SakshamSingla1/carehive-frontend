@@ -1,228 +1,296 @@
 import React, { useEffect, useState } from "react";
 import TextField from "../../atoms/TextField";
 import ColorPickerField from "../../atoms/ColorPicker";
-import { type FormikProps } from "formik";
 import { type ColorTheme } from "../../../services/useColorThemeService";
 import { type RoleResponse, useRoleService } from "../../../services/useRoleService";
 import { FiPlus, FiTrash2 } from "react-icons/fi";
-import { MenuItem, Select, Button } from "@mui/material";
-import { MODE } from "../../../utils/constant";
+import { ADMIN_ROUTES, MODE } from "../../../utils/constant";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Button from "../../atoms/Button";
+import Select from "../../molecules/Select";
+import { useNavigate } from "react-router-dom";
+import { makeRoute, capitalizeFirstLetter } from "../../../utils/helper";
 
 interface ColorThemeFormProps {
-    formik: FormikProps<ColorTheme>;
-    mode: string;
+  onSubmit: (values: ColorTheme) => void;
+  mode: string;
+  colorTheme?: ColorTheme | null;
 }
 
-const ColorThemeForm: React.FC<ColorThemeFormProps> = ({ formik, mode }) => {
-    const roleService = useRoleService();
-    const [roles, setRoles] = useState<RoleResponse[]>([]);
+const validationSchema = Yup.object({
+  role: Yup.string().required("Role is required"),
+  themeName: Yup.string().required("Theme name is required"),
+  palette: Yup.object({
+    colorGroups: Yup.array()
+      .of(
+        Yup.object({
+          groupName: Yup.string().required("Group name required"),
+          colorShades: Yup.array()
+            .of(
+              Yup.object({
+                colorName: Yup.string().required("Color name required"),
+                colorCode: Yup.string().required("Color code required"),
+              })
+            )
+            .min(1, "Add at least 1 shade"),
+        })
+      )
+      .min(1, "Add at least 1 group"),
+  }),
+});
 
-    const loadRoles = async () => {
-        try {
-            const res = await roleService.getRoles();
-            setRoles(res.data.data);
-        } catch (e) {
-            console.error("Error loading roles:", e);
-        }
-    };
+const ColorThemeForm: React.FC<ColorThemeFormProps> = ({
+  onSubmit,
+  mode,
+  colorTheme,
+}) => {
+  const roleService = useRoleService();
+  const navigate = useNavigate();
+  const [roles, setRoles] = useState<RoleResponse[]>([]);
 
-    const addGroup = () => {
-        formik.setFieldValue("palette.colorGroups", [
-            ...formik.values.palette.colorGroups,
-            { groupName: "", colorShades: [{ colorName: "", colorCode: "#ffffff" }] }
-        ]);
-    };
+  const formik = useFormik<ColorTheme>({
+    initialValues: {
+      role: "",
+      themeName: "",
+      palette: {
+        colorGroups: [
+          { groupName: "", colorShades: [{ colorName: "", colorCode: "#ffffff" }] },
+        ],
+      },
+    },
+    validationSchema,
+    onSubmit,
+  });
 
-    const addShade = (groupIndex: number) => {
-        const groups = [...formik.values.palette.colorGroups];
-        groups[groupIndex].colorShades.push({
-            colorName: "",
-            colorCode: "#ffffff"
-        });
-        formik.setFieldValue("palette.colorGroups", groups);
-    };
+  useEffect(() => {
+    roleService.getRoles().then((res) => setRoles(res.data.data));
+  }, []);
 
-    const removeShade = (groupIndex: number, shadeIndex: number) => {
-        const groups = [...formik.values.palette.colorGroups];
-        groups[groupIndex].colorShades.splice(shadeIndex, 1);
-        formik.setFieldValue("palette.colorGroups", groups);
-    };
+  useEffect(() => {
+    if (colorTheme) formik.setValues(colorTheme);
+  }, [colorTheme]);
 
-    const removeGroup = (groupIndex: number) => {
-        const updated = formik.values.palette.colorGroups.filter((_, i) => i !== groupIndex);
-        formik.setFieldValue("palette.colorGroups", updated);
-    };
+  const addGroup = () => {
+    formik.setFieldValue("palette.colorGroups", [
+      ...formik.values.palette.colorGroups,
+      { groupName: "", colorShades: [{ colorName: "", colorCode: "#ffffff" }] },
+    ]);
+  };
 
-    useEffect(() => {
-        loadRoles();
-    }, []);
+  const addShade = (groupIndex: number) => {
+    const groups = [...formik.values.palette.colorGroups];
+    groups[groupIndex].colorShades.push({ colorName: "", colorCode: "#ffffff" });
+    formik.setFieldValue("palette.colorGroups", groups);
+  };
 
-    return (
-        <div className="space-y-8">
+  const removeShade = (groupIndex: number, shadeIndex: number) => {
+    const groups = [...formik.values.palette.colorGroups];
+    groups[groupIndex].colorShades.splice(shadeIndex, 1);
+    formik.setFieldValue("palette.colorGroups", groups);
+  };
 
-            {/* Theme Name */}
-            <div>
-                <TextField
-                    label="Theme Name"
-                    {...formik.getFieldProps("themeName")}
-                    fullWidth
-                    error={Boolean(formik.touched.themeName && formik.errors.themeName)}
-                    helperText={formik.touched.themeName ? formik.errors.themeName : ""}
-                    disabled={mode === MODE.VIEW}
-                />
-            </div>
-
-            {/* Role Selection */}
-            <div>
-                <Select
-                    value={formik.values.role || ""}
-                    onChange={(e) => formik.setFieldValue("role", e.target.value)}
-                    fullWidth
-                    displayEmpty
-                    className="text-lg"
-                    disabled={mode === MODE.VIEW}
-                >
-                    <MenuItem value="" disabled>Select Role</MenuItem>
-                    {roles.map((r) => (
-                        <MenuItem key={r.id} value={r.enumCode}>{r.name}</MenuItem>
-                    ))}
-                </Select>
-                {formik.errors.role && formik.touched.role && (
-                    <div className="text-red-500 text-sm mt-1">{formik.errors.role}</div>
-                )}
-            </div>
-
-            {/* Add Group */}
-            {mode !== MODE.VIEW && <div>
-                <Button
-                    variant="contained"
-                    onClick={addGroup}
-                    startIcon={<FiPlus />}
-                    className="bg-indigo-600! hover:bg-indigo-700!"
-                >
-                    Add Color Group
-                </Button>
-            </div>}
-
-            {/* Color Groups */}
-            <div className="space-y-6">
-                {formik.values.palette.colorGroups.map((group, gIndex) => (
-                    <div key={gIndex} className="p-5 bg-gray-50 border rounded-lg shadow-sm space-y-5">
-
-                        {/* Group Header */}
-                        <div className="flex items-center gap-4">
-                            <div className="flex-1">
-                                <TextField
-                                    label="Group Name"
-                                    value={group.groupName}
-                                    onChange={(e) =>
-                                        formik.setFieldValue(
-                                            `palette.colorGroups.${gIndex}.groupName`,
-                                            e.target.value
-                                        )
-                                    }
-                                    fullWidth
-                                    error={Boolean(
-                                        formik.touched.palette?.colorGroups?.[gIndex]?.groupName &&
-                                        (
-                                            typeof formik.errors.palette?.colorGroups?.[gIndex] === 'string' ||
-                                            formik.errors.palette?.colorGroups?.[gIndex]?.groupName
-                                        )
-                                    )}
-                                    helperText={
-                                        formik.touched.palette?.colorGroups?.[gIndex]?.groupName
-                                            ? typeof formik.errors.palette?.colorGroups?.[gIndex] === 'string'
-                                                ? formik.errors.palette.colorGroups[gIndex] as string
-                                                : formik.errors.palette?.colorGroups?.[gIndex]?.groupName || ''
-                                            : ''
-                                    }
-                                    disabled={mode === MODE.VIEW}
-                                />
-                            </div>
-
-                            {mode !== MODE.VIEW && <button
-                                onClick={() => removeGroup(gIndex)}
-                                className="rounded-md border px-3 py-2 text-red-600 hover:bg-red-50 transition"
-                            >
-                                <FiTrash2 size={17} />
-                            </button>}
-                        </div>
-
-                        {/* Add Shade */}
-                        {mode !== MODE.VIEW && <button
-                            onClick={() => addShade(gIndex)}
-                            className="text-indigo-600 border border-indigo-300 px-3 py-2 rounded-md 
-                                       hover:bg-indigo-50 flex items-center gap-1 text-sm transition"
-                        >
-                            <FiPlus size={14} /> Add Shade
-                        </button>}
-
-                        {/* Shade List */}
-                        <div className="space-y-3">
-                            {group.colorShades.map((shade, sIndex) => (
-                                <div
-                                    key={sIndex}
-                                    className="bg-white p-4 rounded-lg border flex items-center gap-4"
-                                >
-                                    <div className="flex-1">
-                                        <TextField
-                                            label="Color Name"
-                                            value={shade.colorName}
-                                            onChange={(e) =>
-                                                formik.setFieldValue(
-                                                    `palette.colorGroups.${gIndex}.colorShades.${sIndex}.colorName`,
-                                                    e.target.value
-                                                )
-                                            }
-                                            fullWidth
-                                            error={Boolean(
-                                                formik.touched.palette?.colorGroups?.[gIndex]?.colorShades?.[sIndex]?.colorName &&
-                                                (
-                                                    typeof (formik.errors.palette?.colorGroups?.[gIndex] as any)?.colorShades?.[sIndex] === 'string' ||
-                                                    (formik.errors.palette?.colorGroups?.[gIndex] as any)?.colorShades?.[sIndex]?.colorName
-                                                )
-                                            )}
-                                            helperText={
-                                                formik.touched.palette?.colorGroups?.[gIndex]?.colorShades?.[sIndex]?.colorName
-                                                    ? typeof (formik.errors.palette?.colorGroups?.[gIndex] as any)?.colorShades?.[sIndex] === 'string'
-                                                        ? (formik.errors.palette?.colorGroups?.[gIndex] as any)?.colorShades?.[sIndex] as string
-                                                        : (formik.errors.palette?.colorGroups?.[gIndex] as any)?.colorShades?.[sIndex]?.colorName || ''
-                                                    : ''
-                                            }
-                                            disabled={mode === MODE.VIEW}
-                                        />
-                                    </div>
-
-                                    <div className="w-1/2 flex items-center gap-2">
-                                        <ColorPickerField
-                                            label="Color Code"
-                                            value={shade.colorCode}
-                                            onChange={(color) =>
-                                                formik.setFieldValue(
-                                                    `palette.colorGroups.${gIndex}.colorShades.${sIndex}.colorCode`,
-                                                    color
-                                                )
-                                            }
-                                            showInput={true}
-                                            disabled={mode === MODE.VIEW}
-                                        />
-                                    </div>
-                                    {mode !== MODE.VIEW && <button
-                                        onClick={() => removeShade(gIndex, sIndex)}
-                                        className="rounded-md border px-3 py-2 text-red-600 hover:bg-red-50 transition"
-                                    >
-                                        <FiTrash2 size={17} />
-                                    </button>}
-
-                                </div>
-                            ))}
-                        </div>
-
-                    </div>
-                ))}
-            </div>
-        </div>
+  const removeGroup = (groupIndex: number) => {
+    formik.setFieldValue(
+      "palette.colorGroups",
+      formik.values.palette.colorGroups.filter((_, i) => i !== groupIndex)
     );
+  };
+
+  return (
+    <div className="w-full mx-auto px-3 sm:px-6 space-y-8 sm:space-y-10 pb-20">
+
+      {/* Header */}
+      <div className="space-y-1">
+        <h1 className="text-xl sm:text-2xl font-semibold tracking-tight text-gray-900">
+          {capitalizeFirstLetter(mode)} Color Theme Configuration
+        </h1>
+        <p className="text-xs sm:text-sm text-gray-500 leading-relaxed">
+          Define reusable color palettes for consistent UI across the platform
+        </p>
+      </div>
+
+      {/* Basic Info */}
+      <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-4 sm:p-6 space-y-4 sm:space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+          <TextField
+            label="Theme Name"
+            {...formik.getFieldProps("themeName")}
+            error={Boolean(formik.touched.themeName && formik.errors.themeName)}
+            helperText={formik.touched.themeName ? formik.errors.themeName : ""}
+            disabled={mode === MODE.VIEW}
+            fullWidth
+          />
+
+          <Select
+            label="Role"
+            options={roles.map((r) => ({ value: r.enumCode, label: r.name }))}
+            value={formik.values.role}
+            onChange={(e) => formik.setFieldValue("role", e.target.value)}
+            disabled={mode === MODE.VIEW}
+            error={Boolean(formik.touched.role && formik.errors.role)}
+            helperText={formik.touched.role ? formik.errors.role : ""}
+          />
+        </div>
+      </div>
+
+      {/* Color Groups */}
+      <div className="space-y-5 sm:space-y-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <h2 className="text-base sm:text-lg font-semibold text-gray-800">
+            Color Groups
+          </h2>
+
+          {mode !== MODE.VIEW && (
+            <Button
+              label="Add Color Group"
+              variant="primaryContained"
+              startIcon={<FiPlus />}
+              className="w-full sm:w-auto"
+              onClick={addGroup}
+            />
+          )}
+        </div>
+
+        {formik.values.palette.colorGroups.map((group, gIndex) => (
+          <div
+            key={gIndex}
+            className="
+              bg-white rounded-2xl border border-gray-200
+              shadow-sm p-4 sm:p-6
+              space-y-4 sm:space-y-6
+              transition-shadow hover:shadow-md
+            "
+          >
+            {/* Group Header */}
+            <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+              <TextField
+                label="Group Name"
+                value={group.groupName}
+                onChange={(e) =>
+                  formik.setFieldValue(
+                    `palette.colorGroups.${gIndex}.groupName`,
+                    e.target.value
+                  )
+                }
+                disabled={mode === MODE.VIEW}
+                fullWidth
+              />
+
+              {mode !== MODE.VIEW && (
+                <button
+                  onClick={() => removeGroup(gIndex)}
+                  className="
+                    p-2.5 rounded-lg border border-red-200
+                    text-red-600 hover:bg-red-50
+                    hover:border-red-300 transition
+                  "
+                >
+                  <FiTrash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+
+            {/* Shades */}
+            <div className="space-y-4">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                <h3 className="text-sm font-medium text-gray-700">
+                  Color Shades
+                </h3>
+
+                {mode !== MODE.VIEW && (
+                  <Button
+                    label="Add Shade"
+                    variant="secondaryContained"
+                    startIcon={<FiPlus size={14} />}
+                    className="w-full sm:w-auto"
+                    onClick={() => addShade(gIndex)}
+                  />
+                )}
+              </div>
+
+              {group.colorShades.map((shade, sIndex) => (
+                <div
+                  key={sIndex}
+                  className="
+                    grid grid-cols-1 md:grid-cols-3
+                    gap-3 sm:gap-4
+                    bg-gray-50 p-3 sm:p-4
+                    rounded-xl border border-gray-200
+                    transition hover:bg-gray-100
+                  "
+                >
+                  <TextField
+                    label="Color Name"
+                    value={shade.colorName}
+                    onChange={(e) =>
+                      formik.setFieldValue(
+                        `palette.colorGroups.${gIndex}.colorShades.${sIndex}.colorName`,
+                        e.target.value
+                      )
+                    }
+                    disabled={mode === MODE.VIEW}
+                    fullWidth
+                  />
+
+                  <ColorPickerField
+                    label="Color Code"
+                    value={shade.colorCode}
+                    onChange={(color) =>
+                      formik.setFieldValue(
+                        `palette.colorGroups.${gIndex}.colorShades.${sIndex}.colorCode`,
+                        color
+                      )
+                    }
+                    showInput
+                    disabled={mode === MODE.VIEW}
+                  />
+
+                  {mode !== MODE.VIEW && (
+                    <div className="flex items-start justify-end">
+                      <button
+                        onClick={() => removeShade(gIndex, sIndex)}
+                        className="
+                          p-2.5 rounded-lg border border-red-200
+                          text-red-600 hover:bg-red-50
+                          hover:border-red-300 transition
+                        "
+                      >
+                        <FiTrash2 className="w-4 h-4" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Footer Actions */}
+      <div className="
+        w-full mx-auto
+        px-3 sm:px-6 py-4
+        flex flex-col-reverse sm:flex-row
+        justify-between gap-3
+      ">
+        <Button
+          variant="secondaryContained"
+          label="Cancel"
+          className="w-full sm:w-auto"
+          onClick={() => navigate(makeRoute(ADMIN_ROUTES.COLOR_THEME, {}))}
+        />
+
+        {mode !== MODE.VIEW && <Button
+          variant="primaryContained"
+          label={mode === MODE.EDIT ? "Update Color Theme" : "Create Color Theme"}
+          className="w-full sm:w-auto"
+          onClick={() => formik.handleSubmit()}
+          disabled={formik.isSubmitting}
+        />}
+      </div>
+    </div>
+  );
 };
 
 export default ColorThemeForm;

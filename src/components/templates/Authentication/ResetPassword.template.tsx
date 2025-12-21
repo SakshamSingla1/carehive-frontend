@@ -8,6 +8,7 @@ import { AUTH_STATE, HTTP_STATUS } from "../../../utils/types";
 import { useSearchParams } from "react-router-dom";
 import { InputAdornment, IconButton } from "@mui/material";
 import Button from "../../atoms/Button";
+import { useSnackbar } from "../../../hooks/useSnackbar";
 
 interface ResetPasswordProps {
   setAuthState: (authState: AUTH_STATE) => void;
@@ -33,6 +34,7 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ setAuthState }) => {
   const [searchParams] = useSearchParams();
   const [showPassword,setShowPassword] = useState<boolean>(false);
   const [showConfirmPassword,setShowConfirmPassword] = useState<boolean>(false);
+  const { showSnackbar } = useSnackbar();
 
   const formik = useFormik<PasswordResetConfirmDTO>({
     initialValues: {
@@ -52,9 +54,13 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ setAuthState }) => {
 
         if (response.status === HTTP_STATUS.OK) {
           setAuthState(AUTH_STATE.LOGIN_WITH_EMAIL);
+          showSnackbar('success', 'Password reset successful! You can now login with your new password.');
+        } else {
+          showSnackbar('error', 'Password reset failed. Please try again.');
         }
       } catch (error) {
         console.error("Password reset failed:", error);
+        showSnackbar('error', 'Password reset failed. Please try again.');
       } finally {
         setIsLoading(false);
       }

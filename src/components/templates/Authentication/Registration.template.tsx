@@ -13,6 +13,7 @@ import Button from "../../atoms/Button";
 import { useState } from "react";
 import { InputAdornment,IconButton } from "@mui/material";
 import { FiLock, FiEye, FiEyeOff, FiUser, FiMail, FiPhone, FiBriefcase } from "react-icons/fi";
+import { useSnackbar } from "../../../hooks/useSnackbar";
 
 export const roles = [
     { id: 1, enumCode: "ELDER", name: "Elder" },
@@ -38,6 +39,7 @@ const validationSchema = Yup.object({
 /* ---------------------- Register Component ---------------------- */
 const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthState, setIsRegisterFlow }) => {
     const authService = useAuthService();
+    const { showSnackbar } = useSnackbar();
 
     const [showPassword,setShowPassword] = useState<{password: boolean,confirmPassword: boolean
     }>({password: false, confirmPassword: false});
@@ -66,9 +68,11 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
                     setEmail(values.email);
                     setIsRegisterFlow(true);
                     setAuthState(AUTH_STATE.OTP_VERIFICATION);
+                    showSnackbar('success', 'Registration successful! Please verify your email.');
                 }
             } catch (error) {
                 console.error("Registration failed:", error);
+                showSnackbar('error', 'Registration failed. Please try again.');
             } finally {
                 setIsLoading(false);
             }

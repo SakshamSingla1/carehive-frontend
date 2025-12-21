@@ -4,10 +4,12 @@ import { initialPaginationValues } from '../../../utils/constant';
 import TemplateListTableTemplate from '../../templates/Templates/TemplateList.template';
 import { useTemplateService , type TemplateResponse , type TemplateFilterRequest} from '../../../services/useTemplateService';
 import { useSearchParams } from 'react-router-dom';
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 const TemplateListPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const templateService = useTemplateService();
+    const { showSnackbar } = useSnackbar();
 
     const initialFiltersValues: any = {
         search: searchParams.get("search") || "",
@@ -39,8 +41,10 @@ const TemplateListPage: React.FC = () => {
                     });
                     setTemplatesTo(res?.data?.data?.content);
                 }
-            }).catch(() => {
+            }).catch((error) => {
+                console.error("Error fetching templates:", error);
                 setTemplatesTo([]);
+                showSnackbar('error', 'Failed to load templates');
             })
     }
 

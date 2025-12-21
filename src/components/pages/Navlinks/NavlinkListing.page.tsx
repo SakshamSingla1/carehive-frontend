@@ -4,10 +4,12 @@ import { initialPaginationValues } from '../../../utils/constant';
 import NavlinkListTableTemplate from '../../templates/Navlinks/NavlinksListing.template';
 import { useNavlinkService , type NavlinkResponse , type NavlinkFilterRequest} from '../../../services/useNavlinkService';
 import { useSearchParams } from 'react-router-dom';
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 const NavlinkListPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const navlinkService = useNavlinkService();
+    const { showSnackbar } = useSnackbar();
 
     const initialFiltersValues: any = {
         search: searchParams.get("search") || "",
@@ -40,8 +42,10 @@ const NavlinkListPage: React.FC = () => {
                     });
                     setNavlinksTo(res?.data?.data?.content);
                 }
-            }).catch(() => {
+            }).catch((error) => {
                 setNavlinksTo([]);
+                console.log(error);
+                showSnackbar('error', 'Failed to fetch navlinks');
             })
     }
 

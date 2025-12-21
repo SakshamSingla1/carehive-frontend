@@ -10,20 +10,6 @@ import ForgotPasswordTemplate from "../../templates/Authentication/ForgotPasswor
 import ResetPasswordTemplate from "../../templates/Authentication/ResetPassword.template";
 import RegistrationTemplate from "../../templates/Authentication/Registration.template";
 
-const LoadingScreen = () => (
-  <div
-    style={{
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      height: "100vh",
-      width: "100%",
-    }}
-  >
-    <div>Loading authentication...</div>
-  </div>
-);
-
 const Authentication: React.FC = () => {
   const [authState, setAuthState] = useState<AUTH_STATE | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -55,11 +41,6 @@ const Authentication: React.FC = () => {
     }
   }, [searchParams]);
 
-  if (isLoading || !authState) return <LoadingScreen />;
-
-  /* -------------------------------------------------------
-      2️⃣ Render correct screen
-     ------------------------------------------------------- */
   const renderAuthView = () => {
     switch (authState) {
       case AUTH_STATE.REGISTER:
