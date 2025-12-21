@@ -18,8 +18,6 @@ export interface AuthenticatedUserType {
     caretakerStatus: string;
 }
 
-// ---------------- CONTEXT TYPES ----------------
-
 export interface AuthenticatedUserContextType {
     isAuthDialogActive: boolean;
     syncAuthDialogActive: (value?: boolean) => void;
@@ -39,8 +37,6 @@ export interface AuthenticatedUserContextType {
     logout: () => void;
 }
 
-// ---------------- DEFAULT CONTEXT ----------------
-
 export const AuthenticatedUserContext = React.createContext<AuthenticatedUserContextType>({
     isAuthDialogActive: false,
     syncAuthDialogActive: () => {},
@@ -59,8 +55,6 @@ export const AuthenticatedUserContext = React.createContext<AuthenticatedUserCon
 
     logout: () => {},
 });
-
-// ---------------- PROVIDER ----------------
 
 export const AuthenticatedUserProvider: React.FC<AuthenticatedUserProviderType> = ({ children }) => {
     const [isAuthDialogActive, setAuthDialogActive] = useState<boolean>(false);
@@ -101,13 +95,9 @@ export const AuthenticatedUserProvider: React.FC<AuthenticatedUserProviderType> 
         }
     });
 
-    // ---------------- SYNC AUTH DIALOG ----------------
-
     const syncAuthDialogActive = (value?: boolean) => {
         setAuthDialogActive(value ?? user === null);
     };
-
-    // ---------------- LOCAL STORAGE SYNC ----------------
 
     useEffect(() => {
         if (user) localStorage.setItem("user", JSON.stringify(user));
@@ -129,14 +119,11 @@ export const AuthenticatedUserProvider: React.FC<AuthenticatedUserProviderType> 
         else localStorage.removeItem("navlinks");
     }, [navlinks]);
 
-    // ---------------- PROVIDER VALUE ----------------
-
     const logout = () => {
         setAuthenticatedUser(null);
         setThemes(null);
         setDefaultTheme(null);
         setNavlinks(null);
-
         localStorage.removeItem("user");
         localStorage.removeItem("themes");
         localStorage.removeItem("defaultTheme");
@@ -148,19 +135,14 @@ export const AuthenticatedUserProvider: React.FC<AuthenticatedUserProviderType> 
         () => ({
             isAuthDialogActive,
             syncAuthDialogActive,
-
             user,
             setAuthenticatedUser,
-
             themes,
             setThemes,
-
             defaultTheme,
             setDefaultTheme,
-
             navlinks,
             setNavlinks,
-
             logout,
         }),
         [isAuthDialogActive, user, themes, defaultTheme, navlinks]

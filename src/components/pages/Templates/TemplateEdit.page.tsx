@@ -6,11 +6,13 @@ import TemplateFormTemplate from '../../templates/Templates/TemplateForm.templat
 import { ADMIN_ROUTES, MODE } from '../../../utils/constant';
 import { makeRoute } from '../../../utils/helper';
 import { useParams } from 'react-router-dom';
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 const TemplateEditPage: React.FC = () => {
     const navigate = useNavigate();
     const templateService = useTemplateService();
     const params = useParams();
+    const { showSnackbar } = useSnackbar();
     const name = String(params.name);
     const [templateData, setTemplateData] = useState<TemplateResponse | null>(null);
 
@@ -19,9 +21,11 @@ const TemplateEditPage: React.FC = () => {
                 const response = await templateService.updateTemplate(name, values);
                 if (response?.status === HTTP_STATUS.OK) {
                     navigate(makeRoute(ADMIN_ROUTES.TEMPLATES,{}));
+                    showSnackbar('success', 'Template updated successfully');
                 }
             } catch (error) {
                 console.log(error);
+                showSnackbar('error', 'Failed to update template');
             }
     }
 

@@ -14,6 +14,7 @@ import { AUTH_STATE } from "../../../utils/types";
 import { InputAdornment } from "@mui/material";
 import { IconButton } from "@mui/material";
 import Button from "../../atoms/Button";
+import { useSnackbar } from "../../../hooks/useSnackbar";
 
 interface LoginWithEmailProps {
     setAuthState: (authState: AUTH_STATE) => void;
@@ -37,6 +38,7 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
     const [showPassword,setShowPassword] = useState<boolean>(false);
     
     const [isLoading,setIsLoading ] = useState<boolean>(false);
+    const { showSnackbar } = useSnackbar();
 
 
     const formik = useFormik<AuthLoginDTO>({
@@ -67,9 +69,11 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                 setThemes(user.themes);
                 setNavlinks(user.navLinks);
 
-                navigate(`/${user.role}/dashboard`);
+                navigate(`/${user.role.toLowerCase()}/dashboard`);
+                showSnackbar('success', 'Login successful!');
             } catch (error) {
                 console.error("Login failed:", error);
+                showSnackbar('error', 'Invalid email or password. Please try again.');
             } finally {
                 setIsLoading(false);
             }

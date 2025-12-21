@@ -214,7 +214,7 @@ const Button: React.FC<ButtonProps> = ({
 
   return (
     <MuiButton
-      variant="text" // We're handling all styling ourselves
+      variant="text"
       className={`
         ${styles.root} 
         ${styles[variant]} 
