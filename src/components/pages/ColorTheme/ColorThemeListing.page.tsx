@@ -4,17 +4,12 @@ import { initialPaginationValues } from '../../../utils/constant';
 import ColorThemeListingTemplate from '../../templates/ColorTheme/ColorThemeListing.template';
 import { useColorThemeService, type ColorTheme } from '../../../services/useColorThemeService';
 import { useSearchParams } from 'react-router-dom';
-
-// interface IColorThemeFilterRequest {
-//     search: string;
-//     sort: string;
-//     page: number;
-//     size: number;
-// }
+import { useSnackbar } from '../../../hooks/useSnackbar';
 
 const ColorThemeListingPage: React.FC = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const colorThemeService = useColorThemeService();
+    const { showSnackbar } = useSnackbar();
 
     const initialFiltersValues: any = {
         search: searchParams.get("search") || "",
@@ -40,8 +35,10 @@ const ColorThemeListingPage: React.FC = () => {
                     });
                     setColorThemesTo(res?.data?.data?.content);
                 }
-            }).catch(() => {
+            }).catch((error) => {
+                console.error('Error fetching color themes:', error);
                 setColorThemesTo([]);
+                showSnackbar('error', 'Failed to load color themes');
             })
     }
 

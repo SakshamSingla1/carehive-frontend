@@ -7,6 +7,7 @@ import { AUTH_STATE, HTTP_STATUS } from "../../../utils/types";
 import Button from "../../atoms/Button";
 import { useState } from "react";
 import { InputAdornment } from "@mui/material";
+import { useSnackbar } from "../../../hooks/useSnackbar";
 
 interface ForgotPasswordProps {
     setAuthState: (authState: AUTH_STATE) => void;
@@ -22,6 +23,7 @@ const validationSchema = Yup.object({
 /* ---------------------- Forgot Password Component ---------------------- */
 const ForgotPassword: React.FC<ForgotPasswordProps> = ({ setAuthState }) => {
     const authService = useAuthService();
+    const { showSnackbar } = useSnackbar();
 
       const [isLoading,setIsLoading ] = useState<boolean>(false);
     
@@ -36,9 +38,11 @@ const ForgotPassword: React.FC<ForgotPasswordProps> = ({ setAuthState }) => {
 
                 if (response.status === HTTP_STATUS.OK) {
                     setAuthState(AUTH_STATE.LOGIN_WITH_EMAIL);
+                    showSnackbar('success', 'Password reset link sent to your email');
                 }
             } catch(e) {
                 console.error("Error resetting password:", e);
+                showSnackbar('error', 'Failed to send reset link. Please try again.');
             } finally {
                 setIsLoading(false);
             }

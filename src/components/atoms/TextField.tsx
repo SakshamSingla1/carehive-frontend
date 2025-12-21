@@ -3,7 +3,6 @@ import { styled } from "@mui/system";
 import { createUseStyles } from "react-jss";
 import { useAuthenticatedUser } from "../../hooks/useAuthenticatedUser";
 
-// Utility to extract color from backend theme
 const getColor = (theme: any, name: string) => {
     if (!theme?.palette?.colorGroups) return undefined;
 
@@ -21,6 +20,7 @@ const useStyles = createUseStyles({
         fontSize: "16px",
         fontWeight: 400,
         lineHeight: "16px",
+        marginLeft: "8px",
     }),
 
     textField: (colors: any) => ({
@@ -109,17 +109,14 @@ const useStyles = createUseStyles({
             color: colors.neutral700,
             fontSize: "14px",
             lineHeight: "16px",
+            marginLeft: "8px",
         }),
     },
 });
 
-// -----------------------------
-// COMPONENT
-// -----------------------------
 const TextField = styled((props: TextFieldProps) => {
     const { defaultTheme } = useAuthenticatedUser();
 
-    // Map backend palette → easy variables
     const colors = {
         primary300: getColor(defaultTheme, "primary300") ?? "#10b981",
         neutral50: getColor(defaultTheme, "neutral50") ?? "#FAFAFA",

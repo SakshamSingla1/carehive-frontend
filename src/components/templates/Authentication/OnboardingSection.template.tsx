@@ -122,7 +122,7 @@ const OnboardingSection = ({ onFlip }: { onFlip: () => void }) => {
       <motion.img
         src="https://res.cloudinary.com/dwveckkwz/image/upload/v1753875910/Gemini_Generated_Image_lvu2l3lvu2l3lvu2_if4fey.png"
         alt="Healthcare"
-        className="w-full h-26 md:h-44 object-cover rounded-tl-3xl"
+        className="w-full h-26 md:h-60 object-cover rounded-tl-3xl"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       />

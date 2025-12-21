@@ -15,16 +15,13 @@ import {
   FiX,
 } from "react-icons/fi";
 
-/* =====================
-   TYPES
-===================== */
-
 type SnackbarType = "success" | "error" | "info" | "warning";
 
 interface SnackbarState {
   isActive: boolean;
   type: SnackbarType;
   message: string;
+  duration: number;
 }
 
 interface SnackbarContextProps {
@@ -55,19 +52,20 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     isActive: false,
     type: "success",
     message: "",
+    duration: 2500,
   });
 
   const timeoutRef = useRef<number | null>(null);
+  const progressRef = useRef<HTMLDivElement | null>(null);
+  const startTimeRef = useRef<number>(0);
+  const remainingRef = useRef<number>(0);
 
   /* =====================
      ACTIONS
   ===================== */
 
   const hideSnackbar = useCallback(() => {
-    setSnackBar((prev) => ({
-      ...prev,
-      isActive: false,
-    }));
+    setSnackBar((prev) => ({ ...prev, isActive: false }));
 
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
@@ -75,23 +73,40 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     }
   }, []);
 
+  const startTimer = useCallback((duration: number) => {
+    startTimeRef.current = Date.now();
+    remainingRef.current = duration;
+
+    timeoutRef.current = window.setTimeout(hideSnackbar, duration);
+
+    requestAnimationFrame(() => {
+      if (progressRef.current) {
+        progressRef.current.style.transition = `width ${duration}ms linear`;
+        progressRef.current.style.width = "0%";
+      }
+    });
+  }, [hideSnackbar]);
+
   const showSnackbar = useCallback(
     (type: SnackbarType, message: string, duration = 2500) => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
 
       setSnackBar({
         isActive: true,
         type,
         message,
+        duration,
       });
 
-      timeoutRef.current = window.setTimeout(() => {
-        hideSnackbar();
-      }, duration);
+      requestAnimationFrame(() => {
+        if (progressRef.current) {
+          progressRef.current.style.transition = "none";
+          progressRef.current.style.width = "100%";
+        }
+        startTimer(duration);
+      });
     },
-    [hideSnackbar]
+    [startTimer]
   );
 
   /* =====================
@@ -100,9 +115,7 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-      }
+      if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
 
@@ -114,44 +127,37 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     switch (type) {
       case "success":
         return {
-          bg: "#ECFDF5",
-          border: "#22C55E",
-          text: "#166534",
+          bg: "rgba(236,253,245,0.95)",
+          border: "rgba(34,197,94,0.3)",
+          text: "rgba(6,95,70,0.8)",
           icon: <FiCheckCircle size={22} />,
         };
       case "error":
         return {
-          bg: "#FEF2F2",
-          border: "#EF4444",
-          text: "#7F1D1D",
+          bg: "rgba(254,242,242,0.95)",
+          border: "rgba(239,68,68,0.3)",
+          text: "rgba(127,29,29,0.8)",
           icon: <FiXCircle size={22} />,
         };
       case "info":
         return {
-          bg: "#EFF6FF",
-          border: "#3B82F6",
-          text: "#1E3A8A",
+          bg: "rgba(239,246,255,0.95)",
+          border: "rgba(59,130,246,0.3)",
+          text: "rgba(30,58,138,0.8)",
           icon: <FiInfo size={22} />,
         };
       case "warning":
         return {
-          bg: "#FFFBEB",
-          border: "#F59E0B",
-          text: "#92400E",
+          bg: "rgba(255,251,235,0.95)",
+          border: "rgba(245,158,11,0.3)",
+          text: "rgba(146,64,14,0.8)",
           icon: <FiAlertTriangle size={22} />,
-        };
-      default:
-        return {
-          bg: "#F3F4F6",
-          border: "#9CA3AF",
-          text: "#111827",
-          icon: <FiInfo size={22} />,
         };
     }
   };
 
   /* =====================
-     SNACKBAR COMPONENT
+     SNACKBAR UI
   ===================== */
 
   const SnackBarComponent = useMemo(() => {
@@ -160,68 +166,127 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     const styles = getStyles(snackBar.type);
 
     return (
-      <div
-        style={{
-          position: "fixed",
-          top: 72,
-          right: 24,
-          minWidth: 300,
-          maxWidth: 420,
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          padding: "14px 16px",
-          borderRadius: 12,
-          backgroundColor: styles.bg,
-          color: styles.text,
-          borderLeft: `5px solid ${styles.border}`,
-          boxShadow: "0 10px 30px rgba(0,0,0,0.12)",
-          zIndex: 10000,
-          animation: "slideIn 0.25s ease-out",
-        }}
-      >
-        {/* Icon */}
-        <div style={{ color: styles.border }}>{styles.icon}</div>
+      <div className="snackbar-root">
+        <div
+          className="snackbar-card"
+          style={{
+            background: styles.bg,
+            color: styles.text,
+            borderLeft: `5px solid ${styles.border}`,
+          }}
+          onMouseEnter={() => {
+            if (timeoutRef.current) {
+              clearTimeout(timeoutRef.current);
+              remainingRef.current -= Date.now() - startTimeRef.current;
+            }
+          }}
+          onMouseLeave={() => startTimer(remainingRef.current)}
+        >
+          {/* Icon */}
+          <div style={{ color: styles.border }}>{styles.icon}</div>
 
-        {/* Message */}
-        <div style={{ flex: 1, fontSize: 14, fontWeight: 500 }}>
-          {snackBar.message}
+          {/* Message */}
+          <div className="snackbar-message">{snackBar.message}</div>
+
+          {/* Close */}
+          <button className="snackbar-close" onClick={hideSnackbar}>
+            <FiX size={18} />
+          </button>
+
+          {/* Progress */}
+          <div className="snackbar-progress">
+            <div
+              ref={progressRef}
+              className="snackbar-progress-bar"
+              style={{ backgroundColor: styles.border }}
+            />
+          </div>
         </div>
 
-        {/* Close */}
-        <button
-          onClick={hideSnackbar}
-          style={{
-            background: "transparent",
-            border: "none",
-            cursor: "pointer",
-            color: styles.text,
-          }}
-        >
-          <FiX size={18} />
-        </button>
-
-        {/* Animation */}
+        {/* Styles */}
         <style>
           {`
-            @keyframes slideIn {
-              from {
-                opacity: 0;
-                transform: translateX(20px);
-              }
-              to {
-                opacity: 1;
-                transform: translateX(0);
-              }
+          .snackbar-root {
+            position: fixed;
+            z-index: 10000;
+            top: 72px;
+            right: 24px;
+          }
+
+          @media (max-width: 640px) {
+            .snackbar-root {
+              top: auto;
+              bottom: 20px;
+              right: 50%;
+              transform: translateX(50%);
             }
-          `}
+          }
+
+          .snackbar-card {
+            min-width: 280px;
+            max-width: 420px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            border-radius: 14px;
+            box-shadow: 0 12px 32px rgba(0,0,0,0.18);
+            backdrop-filter: blur(10px);
+            animation: snackbar-in 0.35s cubic-bezier(.22,1,.36,1);
+            position: relative;
+            overflow: hidden;
+          }
+
+          .snackbar-message {
+            flex: 1;
+            font-size: 14px;
+            font-weight: 500;
+            line-height: 1.4;
+          }
+
+          .snackbar-close {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            opacity: 0.7;
+          }
+
+          .snackbar-close:hover {
+            opacity: 1;
+          }
+
+          .snackbar-progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 3px;
+            width: 100%;
+            background: rgba(0,0,0,0.08);
+          }
+
+          .snackbar-progress-bar {
+            height: 100%;
+            width: 100%;
+          }
+
+          @keyframes snackbar-in {
+            from {
+              opacity: 0;
+              transform: translateY(-8px) scale(0.96);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+        `}
         </style>
       </div>
     );
-  }, [snackBar, hideSnackbar]);
+  }, [snackBar, hideSnackbar, startTimer]);
 
   /* =====================
-     PROVIDER VALUE
+     CONTEXT VALUE
   ===================== */
 
   const providerValue = useMemo(

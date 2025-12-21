@@ -5,6 +5,7 @@ import { useAuthService } from "../../../services/useAuthService";
 import { useAuthenticatedUser } from "../../../hooks/useAuthenticatedUser";
 import { useNavigate } from "react-router-dom";
 import Button from "../../atoms/Button";
+import { useSnackbar } from "../../../hooks/useSnackbar";
 
 interface OTPVerificationTemplateProps {
     phoneNumber?: string;
@@ -24,22 +25,21 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
     const authService = useAuthService();
     const navigate = useNavigate();
     const { setAuthenticatedUser, setDefaultTheme, setThemes, setNavlinks } = useAuthenticatedUser();
+    const { showSnackbar } = useSnackbar();
 
     const [otp, setOtp] = useState("");
     const [isLoading, setIsLoading] = useState(false);
     const [timer, setTimer] = useState(30);
 
-    /* Countdown Timer */
     useEffect(() => {
         if (timer === 0) return;
         const id = setInterval(() => setTimer((t) => t - 1), 1000);
         return () => clearInterval(id);
     }, [timer]);
 
-    /* ---------------------- Handle OTP Verify ---------------------- */
     const handleVerify = async () => {
         if (otp.length < 6) {
-            alert("Please enter a valid 6-digit OTP");
+            showSnackbar('error', 'Please enter a valid 6-digit OTP');
             return;
         }
 
@@ -49,20 +49,18 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
             let response;
 
             if (isRegisterFlow) {
-                // 🔥 Registration → VERIFY ACCOUNT
                 response = await authService.verifyOtp({
                     email: email || "",
                     otp,
                 });
 
                 if (response.status === HTTP_STATUS.OK) {
-                    // After verifying account → go to LOGIN
                     setIsRegisterFlow(false);
                     setAuthState(AUTH_STATE.LOGIN_WITH_EMAIL);
+                    showSnackbar('success', 'Account verified successfully!');
                     return;
                 }
             } else {
-                // 🔥 Login → USE LOGIN API
                 response = await authService.login({
                     phoneNumber: phoneNumber || "",
                     otp,
@@ -89,11 +87,12 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     setNavlinks(user.navLinks);
 
                     navigate(`/${user.role.toLowerCase()}/dashboard`);
+                    showSnackbar('success', 'Login successful!');
                 }
             }
         } catch (error) {
             console.error("OTP Verification Failed:", error);
-            alert("Invalid OTP. Please try again.");
+            showSnackbar('error', 'Invalid OTP. Please try again.');
         } finally {
             setIsLoading(false);
         }
@@ -115,7 +114,7 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
             setTimer(30);
         } catch (error) {
             console.error("Failed to resend OTP:", error);
-            alert("Failed to resend OTP. Please try again.");
+            showSnackbar('error', 'Failed to resend OTP. Please try again.');
         } finally {
             setIsLoading(false);
         }

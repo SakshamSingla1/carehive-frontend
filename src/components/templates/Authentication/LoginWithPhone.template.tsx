@@ -11,6 +11,7 @@ import { AUTH_STATE, HTTP_STATUS } from "../../../utils/types";
 import Button from "../../atoms/Button";
 import { useState } from "react";
 import { InputAdornment } from "@mui/material";
+import { useSnackbar } from "../../../hooks/useSnackbar";
 
 interface LoginWithPhoneProps {
   setPhoneNumber: (phoneNumber: string) => void;
@@ -28,6 +29,7 @@ const validationSchema = Yup.object({
 /* ---------------------- Login Component ---------------------- */
 const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneNumber, setIsRegisterFlow }) => {
   const authService = useAuthService();
+  const { showSnackbar } = useSnackbar();
 
   const [isLoading,setIsLoading ] = useState<boolean>(false);
 
@@ -47,6 +49,7 @@ const LoginWithPhone: React.FC<LoginWithPhoneProps> = ({ setAuthState, setPhoneN
         }
       } catch(err) {
         console.error(err);
+        showSnackbar('error', 'Failed to send OTP. Please try again.');
       } finally {
         setIsLoading(false);
       }
