@@ -42,5 +42,9 @@ export const ADMIN_ROUTES = {
     NAVLINKS: "admin/navlinks",
     NAVLINKS_ADD: "admin/navlinks/add",
     NAVLINKS_EDIT: "admin/navlinks/:role/:index/edit",
-    NAVLINKS_VIEW: "admin/navlinks/:role/:index"
+    NAVLINKS_VIEW: "admin/navlinks/:role/:index",
+    SERVICES: "admin/service",
+    SERVICES_ADD: "admin/service/add",
+    SERVICES_EDIT: "admin/service/:id/edit",
+    SERVICES_VIEW: "admin/service/:id"
 }

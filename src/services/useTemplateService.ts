@@ -19,7 +19,7 @@ export interface TemplateRequest {
     subject: string;
     body: string;
     type: string;
-    active: boolean;
+    active: string;
 }
 
 export interface TemplateResponse {
@@ -28,7 +28,7 @@ export interface TemplateResponse {
     subject: string;
     body: string;
     type: string;
-    active: boolean;
+    active: string;
     createdAt: string;
     updatedAt: string;
 }

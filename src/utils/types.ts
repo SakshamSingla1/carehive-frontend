@@ -44,3 +44,10 @@ export const VERIFICATION_STATUS = {
 } as const;
 
 export type VERIFICATION_STATUS = typeof VERIFICATION_STATUS[keyof typeof VERIFICATION_STATUS];
+
+export const STATUS = {
+    ACTIVE: "ACTIVE",
+    INACTIVE: "INACTIVE"
+} as const;
+
+export type STATUS = typeof STATUS[keyof typeof STATUS];

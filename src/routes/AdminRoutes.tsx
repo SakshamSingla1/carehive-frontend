@@ -4,6 +4,7 @@ import NavlinkRoutes from "./Admin/NavlinkRoutes";
 import ColorThemeRoutes from "./Admin/ColorThemeRoutes";
 import ProfileRoutes from "./Admin/ProfileRoutes";
 import TemplateRoutes from "./Admin/TemplatesRouter";
+import ServiceRoutes from "./Admin/ServiceRouter";
 
 const AdminRoutes = () => {
     return (
@@ -14,6 +15,7 @@ const AdminRoutes = () => {
             <Route path="color-theme/*" element={<ColorThemeRoutes />} />
             <Route path="user-profile/*" element={<ProfileRoutes />} />
             <Route path="templates/*" element={<TemplateRoutes />} />
+            <Route path="service/*" element={<ServiceRoutes />} />
         </Routes>
     );
 };

@@ -1,79 +1,156 @@
-import React from "react";
-import { FiBell, FiSearch } from "react-icons/fi";
-import { useLocation } from "react-router-dom";
+import React, { useMemo, useCallback, useDeferredValue } from "react";
+import { FiBell, FiSearch, FiChevronRight } from "react-icons/fi";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAuthenticatedUser } from "../../../hooks/useAuthenticatedUser";
-import { getColor, getBreadcrumbsFromUrl } from "../../../utils/helper";
+import {
+  getColor,
+  getBreadcrumbsFromUrl,
+  makeRoute,
+} from "../../../utils/helper";
 import { ADMIN_ROUTES } from "../../../utils/constant";
-import { makeRoute } from "../../../utils/helper";
-import { useNavigate } from "react-router-dom";
 
-const Topbar: React.FC<{ collapsed: boolean }> = () => {
-    const { defaultTheme, user } = useAuthenticatedUser();
-    const location = useLocation();
-    const navigate = useNavigate();
+const Topbar: React.FC<{ collapsed: boolean }> = React.memo(() => {
+  const { defaultTheme, user } = useAuthenticatedUser();
+  const location = useLocation();
+  const navigate = useNavigate();
 
-    const c = {
-        primary50: getColor(defaultTheme, "primary50") ?? "#EEF2FF",
-        primary700: getColor(defaultTheme, "primary700") ?? "#4338CA",
-        neutral0: "#FFFFFF",
-        neutral50: getColor(defaultTheme, "neutral50") ?? "#F9FAFB",
-        neutral200: getColor(defaultTheme, "neutral200") ?? "#E5E7EB",
-        neutral800: getColor(defaultTheme, "neutral800") ?? "#1F2937",
-    };
+  /* ---------------- COLORS ---------------- */
+  const colors = useMemo(
+    () => ({
+      primary50: getColor(defaultTheme, "primary50") ?? "#EEF2FF",
+      primary700: getColor(defaultTheme, "primary700") ?? "#4338CA",
+      neutral0: "#FFFFFF",
+      neutral50: getColor(defaultTheme, "neutral50") ?? "#F9FAFB",
+      neutral200: getColor(defaultTheme, "neutral200") ?? "#E5E7EB",
+      neutral800: getColor(defaultTheme, "neutral800") ?? "#1F2937",
+    }),
+    [defaultTheme]
+  );
 
-    const breadcrumbs = getBreadcrumbsFromUrl(location.pathname);
-    const breadcrumbText =
-        breadcrumbs.map((b) => b.label).join(" / ") || "Dashboard";
+  /* ---------------- BREADCRUMBS ---------------- */
+  const rawBreadcrumbs = useMemo(
+    () => getBreadcrumbsFromUrl(location.pathname),
+    [location.pathname]
+  );
+  const breadcrumbs = useDeferredValue(rawBreadcrumbs);
 
-    return (
-        <div
-            className="h-16 sticky top-0 z-40 flex items-center justify-between px-5"
-            style={{
-                background: c.neutral0,
-                borderBottom: `1px solid ${c.neutral200}`,
-            }}
+  /* ---------------- HANDLERS ---------------- */
+  const navigateTo = useCallback(
+    (path: string) => navigate(path),
+    [navigate]
+  );
+
+  const goToProfile = useCallback(
+    () => navigate(makeRoute(ADMIN_ROUTES.USER_PROFILE, {})),
+    [navigate]
+  );
+
+  return (
+    <header
+      className="
+        relative top-0 z-40
+        flex items-center
+        px-4 sm:px-5
+        box-border
+        min-h-21.5 max-h-21.5
+        overflow-hidden
+      "
+      style={{
+        background: colors.neutral0,
+        borderBottom: `1px solid ${colors.neutral200}`,
+      }}
+    >
+      {/* LEFT : Breadcrumbs */}
+      <div className="flex items-center gap-2 min-w-0">
+        <nav className="flex items-center gap-2 truncate text-sm font-semibold">
+          {breadcrumbs.length === 0 && (
+            <span style={{ color: colors.neutral800 }}>Dashboard</span>
+          )}
+
+          {breadcrumbs.map((crumb, index) => {
+            const isLast = index === breadcrumbs.length - 1;
+
+            return (
+              <div key={crumb.path} className="flex items-center gap-2">
+                {index !== 0 && (
+                  <FiChevronRight
+                    size={14}
+                    className="text-gray-400"
+                  />
+                )}
+
+                {isLast ? (
+                  <span
+                    className="truncate max-w-40"
+                    style={{ color: colors.neutral800 }}
+                  >
+                    {crumb.label}
+                  </span>
+                ) : (
+                  <button
+                    onClick={() => navigateTo(crumb.path)}
+                    className="truncate max-w-40 hover:underline"
+                    style={{ color: colors.primary700 }}
+                  >
+                    {crumb.label}
+                  </button>
+                )}
+              </div>
+            );
+          })}
+        </nav>
+      </div>
+
+      {/* CENTER : Search (Perfectly Centered) */}
+      <div
+        className="
+          hidden md:flex
+          absolute left-1/2 -translate-x-1/2
+          items-center gap-2
+          rounded-lg px-3 py-2
+          h-12
+        "
+        style={{
+          background: colors.neutral50,
+          color: colors.neutral800,
+        }}
+      >
+        <FiSearch className="opacity-70" />
+        <input
+          type="text"
+          placeholder="Search..."
+          className="
+            bg-transparent focus:outline-none
+            text-sm placeholder-gray-400
+            w-56
+          "
+        />
+      </div>
+
+      {/* RIGHT : Actions */}
+      <div className="ml-auto flex items-center gap-4">
+        <button className="p-2 rounded-full hover:bg-gray-100">
+          <FiBell size={20} className="text-gray-700" />
+        </button>
+
+        <button
+          onClick={goToProfile}
+          className="
+            inline-flex items-center justify-center
+            w-10 h-10 rounded-full
+            font-bold text-sm
+            hover:shadow-md
+          "
+          style={{
+            background: colors.neutral50,
+            color: colors.neutral800,
+          }}
         >
-            {/* LEFT */}
-            <div className="flex items-center gap-4">
-                <span
-                    className="text-sm font-semibold"
-                    style={{ color: c.neutral800 }}
-                    title={breadcrumbText}
-                >
-                    {breadcrumbText}
-                </span>
-
-                <div
-                    className="hidden md:flex items-center gap-2 rounded-lg px-3 py-2"
-                    style={{ background: c.neutral50, color: c.neutral800 }}
-                >
-                    <FiSearch className="opacity-80" />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="bg-transparent focus:outline-none text-sm placeholder-gray-400"
-                    />
-                </div>
-            </div>
-            <div className="flex items-center gap-5">
-                <FiBell size={20} className="text-gray-700" />
-                <button
-                    onClick={() => navigate(makeRoute(ADMIN_ROUTES.USER_PROFILE,{}))}
-                    className="inline-flex items-center justify-center w-10 h-10 rounded-full hover:-translate-y-0.5 transition-all focus:outline-none focus:ring-2 focus:ring-offset-2"
-                    style={{
-                        background: c.neutral50,
-                        color: c.neutral800,
-                        boxShadow: `0 1px 2px 0 ${c.neutral200}66`,
-                    }}
-                    title={user?.name || "User"}
-                >
-                    <span className="text-sm font-bold">
-                        {user?.name?.[0]?.toUpperCase() ?? "U"}
-                    </span>
-                </button>
-            </div>
-        </div>
-    );
-};
+          {user?.name?.[0]?.toUpperCase() ?? "U"}
+        </button>
+      </div>
+    </header>
+  );
+});
 
 export default Topbar;

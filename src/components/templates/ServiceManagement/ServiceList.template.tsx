@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { type ColumnType } from "../../atoms/Table";
 import { type IPagination } from "../../../utils/types";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -6,102 +6,86 @@ import { DateUtils, makeRoute } from "../../../utils/helper";
 import TextField from "../../atoms/TextField";
 import { InputAdornment } from '@mui/material';
 import Table from "../../atoms/Table";
-import { type NavlinkResponse, type NavlinkFilterRequest } from "../../../services/useNavlinkService";
+import { type ServiceResponse, type ServiceFilterRequest } from "../../../services/useServicesService";
 import { FiEdit, FiEye, FiSearch } from "react-icons/fi";
-import { useRoleService, type RoleResponse } from "../../../services/useRoleService";
-import { HTTP_STATUS } from "../../../utils/types";
 import { ADMIN_ROUTES } from "../../../utils/constant";
 import Button from "../../atoms/Button";
-import Select from "../../molecules/Select";
 
-interface INavlinkListTableTemplateProps {
-    navlinks: NavlinkResponse[];
+interface IServiceListTableTemplateProps {
+    services: ServiceResponse[];
     pagination: IPagination;
     handleFiltersChange: (name: string, value: any) => void;
     handlePaginationChange: (event: any, newPage: number) => void;
     handleRowsPerPageChange: (event: any) => void;
-    filters: NavlinkFilterRequest;
+    filters: ServiceFilterRequest;
 }
 
-const NavlinkListTableTemplate: React.FC<INavlinkListTableTemplateProps> = ({ navlinks, pagination, handleFiltersChange, handlePaginationChange, handleRowsPerPageChange, filters }) => {
+const ServiceListTableTemplate: React.FC<IServiceListTableTemplateProps> = ({ services, pagination, handleFiltersChange, handlePaginationChange, handleRowsPerPageChange, filters }) => {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const roleService = useRoleService();
-    const [roles, setRolesTo] = useState<RoleResponse[]>([]);
-
-    const loadRoles = async () => {
-        await roleService.getRoles()
-            .then((res) => {
-                if (res?.status === HTTP_STATUS.OK) {
-                    setRolesTo(res?.data?.data);
-                }
-            }).catch(() => {
-                setRolesTo([]);
-            })
+    
+    const handleAddService = () => {
+        navigate(makeRoute(ADMIN_ROUTES.SERVICES_ADD, {}));
     }
 
-    const handleAddNavlink = () => {
-        navigate(makeRoute(ADMIN_ROUTES.NAVLINKS_ADD, {}));
-    }
-
-    const handleEdit = (role: string, index: string) => {
+    const handleEdit = (id: string) => {
         const query = {
             page: searchParams.get("page") || "",
             size: searchParams.get("size") || "",
             search: searchParams.get("search") || "",
         }
         navigate(
-            makeRoute(ADMIN_ROUTES.NAVLINKS_EDIT, {
-                params: { role, index },
+            makeRoute(ADMIN_ROUTES.SERVICES_EDIT, {
+                params: { id },
                 query: query    
             })
         );
     }
 
-    const handleView = (role: string, index: string) => {
+    const handleView = (id: string) => {
         const query = {
             page: searchParams.get("page") || "",
             size: searchParams.get("size") || "",
             search: searchParams.get("search") || "",
         }
         navigate(
-            makeRoute(ADMIN_ROUTES.NAVLINKS_VIEW, {
-                params: { role, index },
+            makeRoute(ADMIN_ROUTES.SERVICES_VIEW, {
+                params: { id },
                 query: query
             })
         );
     }
 
-    const Action = (role: string, index: string) => {
+    const Action = (id: string) => {
         return (
             <div className='flex justify-center space-x-2' title=''>
-                <button onClick={() => handleEdit(role, index)} className={`w-6 h-6`}>
+                <button onClick={() => handleEdit(id)} className={`w-6 h-6`}>
                     <FiEdit />
                 </button>
-                <button onClick={() => handleView(role, index)} className={`w-6 h-6`}>
+                <button onClick={() => handleView(id)} className={`w-6 h-6`}>
                     <FiEye />
                 </button>
             </div>
         );
     };
 
-    const getRecords = () => navlinks?.map((navlink: NavlinkResponse, index) => [
+    const getRecords = () => services?.map((service: ServiceResponse, index) => [
         pagination.currentPage * pagination.pageSize + index + 1,
-        navlink.name,
-        navlink.roleCode,
-        navlink.index,
-        DateUtils.dateTimeSecondToDate(navlink.createdAt ?? ""),
-        DateUtils.dateTimeSecondToDate(navlink.updatedAt ?? ""),
-        Action(navlink.roleCode ?? "", navlink.index ?? "")
+        service.name,
+        service.pricePerHour,
+        DateUtils.dateTimeSecondToDate(service.createdAt ?? ""),
+        DateUtils.dateTimeSecondToDate(service.updatedAt ?? ""),
+        service.status,
+        Action(service?.id || "")
     ])
 
     const getTableColumns = () => [
         { label: "Sr No.", key: "id", type: "number" as ColumnType, props: { className: '' } },
         { label: "Name", key: "name", type: "text" as ColumnType, props: { className: '' } },
-        { label: "Role Code", key: "roleCode", type: "text" as ColumnType, props: { className: '' } },
-        { label: "Index", key: "index", type: "number" as ColumnType, props: { className: '' } },
+        { label: "Price", key: "pricePerHour", type: "number" as ColumnType, props: { className: '' } },
         { label: "Created Date", key: "createdAt", type: "date" as ColumnType, props: { className: '' } },
         { label: "Last Modified", key: "updatedAt", type: "date" as ColumnType, props: { className: '' } },
+        { label: "Status", key: "status", type: "text" as ColumnType, props: { className: '' } },
         { label: "Action", key: "action", type: "custom" as ColumnType, props: { className: '' } },
     ]
 
@@ -118,35 +102,22 @@ const NavlinkListTableTemplate: React.FC<INavlinkListTableTemplateProps> = ({ na
         columns: getTableColumns() ?? []
     });
 
-    useEffect(() => {
-        loadRoles();
-    }, []);
-
     return (
         <div className="grid gap-y-4">
             <div className='flex justify-between'>
-                <div className={`text-2xl font-semibold my-auto`}>Navlink List</div>
+                <div className={`text-2xl font-semibold my-auto`}>Service List</div>
                 <Button 
-                    onClick={() => handleAddNavlink()}
+                    onClick={handleAddService}
                     variant="primaryContained"
-                    label="Add New Navlink"
+                    label="Add New Service"
                 />
             </div>
-            <div className='flex justify-between'>
-                <div className={`w-[250px]`}>
-                    <Select
-                        options={roles.map(role => ({ label: role.name, value: role.enumCode }))}
-                        value={filters.role || ""}
-                        onChange={(e) => handleFiltersChange("role", e.target.value)}
-                        fullWidth
-                        placeholder="Select Role"
-                    />
-                </div>
+            <div className='flex justify-end'>
                 <div className={`w-[250px]`}>
                     <TextField
                         label=''
                         variant="outlined"
-                        placeholder="Search...."
+                        placeholder="Search..."
                         value={filters.search}
                         name='search'
                         onChange={(event) => {
@@ -162,4 +133,4 @@ const NavlinkListTableTemplate: React.FC<INavlinkListTableTemplateProps> = ({ na
         </div>
     )
 }
-export default NavlinkListTableTemplate;
+export default ServiceListTableTemplate;
