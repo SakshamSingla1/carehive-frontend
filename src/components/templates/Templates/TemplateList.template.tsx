@@ -106,7 +106,7 @@ const TemplateListTableTemplate: React.FC<TemplateListTableTemplateProps> = ({ t
                     label="Add New Template"
                 />
             </div>
-            <div className='flex justify-between'>
+            <div className='flex justify-end'>
                 <div className={`w-[250px]`}>
                     <TextField
                         label=''
