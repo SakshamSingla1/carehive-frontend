@@ -30,7 +30,7 @@ interface RegisterTemplateProps {
 const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     email: Yup.string().email("Enter a valid email").required("Email is required"),
-    phoneNumber: Yup.string().required("Phone number is required"),
+    phone: Yup.string().required("Phone number is required"),
     roleCode: Yup.string().required("Role is required"),
     password: Yup.string().min(6).required("Password is required"),
     confirmPassword: Yup.string().required("Confirm Password is required").oneOf([Yup.ref("password")], "Passwords must match"),
@@ -50,7 +50,7 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
             name: "",
             username: "",
             email: "",
-            phoneNumber: "",
+            phone: "",
             roleCode: "",
             password: "",
             confirmPassword: "",
@@ -82,18 +82,14 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
     return (
         <div className="w-full">
             <div className="p-8">
-                {/* ------------------ Header ------------------ */}
                 <div className="text-center mb-6 flex flex-col items-center">
                     <div className="p-3 rounded-full bg-green-100 text-green-600 text-3xl flex items-center justify-center mb-3 shadow-sm">
                         <FiUserPlus />
                     </div>
-
                     <h2 className="text-2xl font-bold tracking-tight text-green-800">
                         Create your account
                     </h2>
                 </div>
-
-                {/* ------------------ Registration Form ------------------ */}
                 <div className="space-y-4">
                     <TextField
                         fullWidth
@@ -112,7 +108,6 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
                         error={formik.touched.name && !!formik.errors.name}
                         helperText={formik.touched.name && formik.errors.name}
                     />
-
                     <TextField
                         fullWidth
                         id="email"
@@ -130,13 +125,12 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
                         error={formik.touched.email && !!formik.errors.email}
                         helperText={formik.touched.email && formik.errors.email}
                     />
-
                     <TextField
                         fullWidth
-                        id="phoneNumber"
-                        name="phoneNumber"
+                        id="phone"
+                        name="phone"
                         label="Phone Number"
-                        value={formik.values.phoneNumber}
+                        value={formik.values.phone}
                         onChange={formik.handleChange}
                         InputProps={{
                             startAdornment: (
@@ -145,10 +139,9 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
                                 </InputAdornment>
                             ),
                         }}
-                        error={formik.touched.phoneNumber && !!formik.errors.phoneNumber}
-                        helperText={formik.touched.phoneNumber && formik.errors.phoneNumber}
+                        error={formik.touched.phone && !!formik.errors.phone}
+                        helperText={formik.touched.phone && formik.errors.phone}
                     />
-
                     <div className="flex flex-col">
                         <Select
                             label="Role"
@@ -166,7 +159,6 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
                             }}
                         />
                     </div>
-
                     <TextField
                         fullWidth
                         name="password"
@@ -234,8 +226,6 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
                             formik.errors.confirmPassword
                         }
                     />
-
-                    {/* Register Button */}
                     <div className="flex justify-center items-center">
                         <Button
                             label="Sign Up"
@@ -245,8 +235,6 @@ const RegisterTemplate: React.FC<RegisterTemplateProps> = ({ setEmail, setAuthSt
                             disabled={isLoading}
                         />
                     </div>
-
-                    {/* Already have account? */}
                     <div className="text-center mt-5">
                         <p className="text-sm text-gray-600">
                             Already have an account?{" "}

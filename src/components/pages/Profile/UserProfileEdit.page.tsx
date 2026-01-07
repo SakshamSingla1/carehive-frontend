@@ -30,7 +30,7 @@ const validationSchema = Yup.object({
     name: Yup.string().required("Name is required"),
     username: Yup.string().required("Username is required"),
     email: Yup.string().email("Invalid email").required("Email is required"),
-    phoneNumber: Yup.string().required("Phone number is required"),
+    phone: Yup.string().required("Phone number is required"),
     roleCode: Yup.string().required("Role is required"),
 });
 
@@ -53,7 +53,7 @@ const UserProfileEditPage: React.FC = () => {
       name: "",
       username: "",
       email: "",
-      phoneNumber: "",
+      phone: "",
       roleCode: "",
     },
     validationSchema,
@@ -63,7 +63,7 @@ const UserProfileEditPage: React.FC = () => {
           name: values.name,
           username: values.username,
           email: values.email,
-          phoneNumber: values.phoneNumber,
+          phone: values.phone,
           roleCode: values.roleCode
         };
         const response = await authService.updateCurrentUser(payload);
@@ -87,7 +87,7 @@ const UserProfileEditPage: React.FC = () => {
           name: user.name ?? "",
           username: user.username ?? "",
           email: user.email ?? "",
-          phoneNumber: user.phoneNumber ?? "",
+          phone: user.phone ?? "",
           roleCode: user.roleCode ?? "",
         });
       }

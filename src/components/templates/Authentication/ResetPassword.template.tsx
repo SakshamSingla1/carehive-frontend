@@ -14,7 +14,6 @@ interface ResetPasswordProps {
   setAuthState: (authState: AUTH_STATE) => void;
 }
 
-/* ---------------------- Validation Schema ---------------------- */
 const validationSchema = Yup.object({
   token: Yup.string().required("Token is required"),
 
@@ -27,7 +26,6 @@ const validationSchema = Yup.object({
     .oneOf([Yup.ref("newPassword")], "Passwords must match"),
 });
 
-/* ---------------------- Reset Password Component ---------------------- */
 const ResetPassword: React.FC<ResetPasswordProps> = ({ setAuthState }) => {
   const authService = useAuthService();
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -70,20 +68,15 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ setAuthState }) => {
   return (
     <div className="w-full">
       <div className="p-8">
-
-        {/* ------------------ Header ------------------ */}
         <div className="text-center mb-6 flex flex-col items-center">
           <div className="p-3 rounded-full bg-green-100 text-green-600 text-3xl flex items-center justify-center mb-3 shadow-sm">
             <FiLock />
           </div>
-
           <h2 className="text-2xl font-bold tracking-tight">Reset Password</h2>
           <p className="text-gray-600 mt-1">
             Enter the token sent to your email and set a new password.
           </p>
         </div>
-
-        {/* ------------------ Reset Password Form ------------------ */}
         <div className="flex flex-col gap-y-8">
           <TextField
             fullWidth
@@ -115,7 +108,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ setAuthState }) => {
             error={formik.touched.newPassword && Boolean(formik.errors.newPassword)}
             helperText={formik.touched.newPassword && formik.errors.newPassword}
           />
-
           <TextField
             fullWidth
             name="confirmPassword"
@@ -152,8 +144,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ setAuthState }) => {
               formik.errors.confirmPassword
             }
           />
-
-          {/* Submit */}
           <div className="flex justify-center items-center">
             <Button
               label="Reset Password"
@@ -162,8 +152,6 @@ const ResetPassword: React.FC<ResetPasswordProps> = ({ setAuthState }) => {
               onClick={() => formik.handleSubmit()}
             />
           </div>
-
-          {/* Back to Login */}
           <div className="text-center mt-5">
             <p className="text-sm text-gray-600">
               Remember your password?{" "}

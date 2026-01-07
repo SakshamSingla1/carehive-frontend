@@ -20,7 +20,6 @@ interface LoginWithEmailProps {
     setAuthState: (authState: AUTH_STATE) => void;
 }
 
-/* ---------------------- Validation Schema ---------------------- */
 const validationSchema = Yup.object({
     email: Yup.string()
         .email("Please enter a valid email")
@@ -29,7 +28,6 @@ const validationSchema = Yup.object({
     password: Yup.string().required("Password is required"),
 });
 
-/* ---------------------- Login Component ---------------------- */
 const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
     const authService = useAuthService();
     const navigate = useNavigate();
@@ -83,18 +81,13 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
     return (
         <div className="w-full">
             <div className="p-8">
-
-                {/* ------------------ Header ------------------ */}
                 <div className="text-center mb-6 flex flex-col items-center">
                     <div className="p-3 rounded-full bg-green-100 text-green-600 text-3xl flex items-center justify-center mb-3 shadow-sm">
                         <FiLock />
                     </div>
-
                     <h2 className="text-2xl text-green-800 font-bold tracking-tight">
                         Sign in to your account
                     </h2>
-
-                    {/* Toggle Button Group */}
                     <div className="mt-6 flex justify-center">
                         <ToggleButtonGroup
                             fullWidth
@@ -133,10 +126,7 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                             </ToggleButton>
                         </ToggleButtonGroup>
                     </div>
-
                 </div>
-
-                {/* ------------------ Form ------------------ */}
                 <div className="space-y-6">
                     <TextField
                         fullWidth
@@ -156,7 +146,6 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                         error={formik.touched.email && Boolean(formik.errors.email)}
                         helperText={formik.touched.email && formik.errors.email}
                     />
-
                     <TextField
                         fullWidth
                         name="password"
@@ -187,8 +176,6 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                         error={formik.touched.password && Boolean(formik.errors.password)}
                         helperText={formik.touched.password && formik.errors.password}
                     />
-
-                    {/* Forgot Password */}
                     <div className="flex justify-end text-sm mt-1">
                         <button
                             type="button"
@@ -198,8 +185,6 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                             Forgot password?
                         </button>
                     </div>
-
-                    {/* Sign In Button */}
                     <div className="flex items-center justify-center">
                         <Button
                             label={"Sign In"}
@@ -209,7 +194,6 @@ const LoginWithEmail: React.FC<LoginWithEmailProps> = ({ setAuthState }) => {
                             disabled={isLoading || !formik.isValid}
                         />
                     </div>
-                    {/* Create New Account */}
                     <div className="text-center mt-5">
                         <p className="text-sm text-gray-600">
                             Don't have an account?{" "}

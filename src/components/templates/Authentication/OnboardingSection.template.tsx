@@ -97,28 +97,24 @@ const OnboardingSection = ({ onFlip }: { onFlip: () => void }) => {
   const [isHovered, setIsHovered] = useState(false);
   const [ref, inView] = useInView({ threshold: 0.1, triggerOnce: true });
 
-  /* Auto rotate ONLY on desktop */
+  const CurrentIcon = features[currentFeature]?.icon;
+  const CurrentColor = features[currentFeature]?.color;
+
   useEffect(() => {
     if (!inView || isMobile) return;
-
     const interval = setInterval(() => {
       if (!isHovered) {
         setCurrentFeature(prev => (prev + 1) % features.length);
       }
     }, 4000);
-
     return () => clearInterval(interval);
   }, [inView, isHovered, isMobile]);
-
-  const CurrentIcon = features[currentFeature]?.icon;
-  const CurrentColor = features[currentFeature]?.color;
 
   return (
     <div
       ref={ref}
       className="h-full flex flex-col rounded-tl-3xl rounded-bl-3xl bg-linear-to-br from-gray-50 to-white relative"
     >
-      {/* Header Image */}
       <motion.img
         src="https://res.cloudinary.com/dwveckkwz/image/upload/v1753875910/Gemini_Generated_Image_lvu2l3lvu2l3lvu2_if4fey.png"
         alt="Healthcare"
@@ -126,20 +122,15 @@ const OnboardingSection = ({ onFlip }: { onFlip: () => void }) => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
       />
-
       <Fade in={inView} timeout={700}>
         <div className="flex-1 flex flex-col p-6 md:p-8 pb-32 md:pb-8">
-          {/* Title */}
           <div className="text-center mb-8">
             <h1 className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent bg-linear-to-r from-green-500 to-blue-500">
               Welcome to CareHive
             </h1>
           </div>
-
-          {/* FEATURES */}
           <div className="flex-1 w-full">
             {isMobile ? (
-              /* MOBILE SWIPE VIEW */
               <div className="flex gap-4 overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-6">
                 {features.map((feature, index) => (
                   <motion.div
@@ -155,7 +146,6 @@ const OnboardingSection = ({ onFlip }: { onFlip: () => void }) => {
                 ))}
               </div>
             ) : (
-              /* DESKTOP ANIMATED VIEW */
               <div
                 className="w-full max-w-md mx-auto"
                 onMouseEnter={() => setIsHovered(true)}
@@ -178,8 +168,6 @@ const OnboardingSection = ({ onFlip }: { onFlip: () => void }) => {
               </div>
             )}
           </div>
-
-          {/* Security Footer */}
           <div className="mt-8 text-center">
             <div className="flex items-center justify-center gap-2 text-sm text-gray-500">
               <FaShieldAlt className="text-green-500" />
@@ -188,8 +176,6 @@ const OnboardingSection = ({ onFlip }: { onFlip: () => void }) => {
           </div>
         </div>
       </Fade>
-
-      {/* MOBILE CTA */}
       <motion.div
         className="md:hidden fixed bottom-0 left-0 right-0 p-6 bg-white border-t shadow-2xl"
         initial={{ y: 100 }}

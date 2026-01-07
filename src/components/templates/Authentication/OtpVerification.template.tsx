@@ -8,7 +8,7 @@ import Button from "../../atoms/Button";
 import { useSnackbar } from "../../../hooks/useSnackbar";
 
 interface OTPVerificationTemplateProps {
-    phoneNumber?: string;
+    phone?: string;
     email?: string;
     setAuthState: (authState: AUTH_STATE) => void;
     isRegisterFlow?: boolean;
@@ -16,7 +16,7 @@ interface OTPVerificationTemplateProps {
 }
 
 const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
-    phoneNumber,
+    phone,
     email,
     setAuthState,
     isRegisterFlow = false,
@@ -31,29 +31,19 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
     const [isLoading, setIsLoading] = useState(false);
     const [timer, setTimer] = useState(30);
 
-    useEffect(() => {
-        if (timer === 0) return;
-        const id = setInterval(() => setTimer((t) => t - 1), 1000);
-        return () => clearInterval(id);
-    }, [timer]);
-
     const handleVerify = async () => {
         if (otp.length < 6) {
             showSnackbar('error', 'Please enter a valid 6-digit OTP');
             return;
         }
-
         try {
             setIsLoading(true);
-
             let response;
-
             if (isRegisterFlow) {
                 response = await authService.verifyOtp({
                     email: email || "",
                     otp,
                 });
-
                 if (response.status === HTTP_STATUS.OK) {
                     setIsRegisterFlow(false);
                     setAuthState(AUTH_STATE.LOGIN_WITH_EMAIL);
@@ -62,14 +52,11 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                 }
             } else {
                 response = await authService.login({
-                    phoneNumber: phoneNumber || "",
+                    phone: phone || "",
                     otp,
                 });
-
                 if (response.status === HTTP_STATUS.OK) {
                     const user = response.data.data;
-
-                    // Store logged-in user
                     setAuthenticatedUser({
                         id: user.id,
                         email: user.email,
@@ -85,7 +72,6 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     setDefaultTheme(user.defaultTheme);
                     setThemes(user.themes);
                     setNavlinks(user.navLinks);
-
                     navigate(`/${user.role.toLowerCase()}/dashboard`);
                     showSnackbar('success', 'Login successful!');
                 }
@@ -98,19 +84,14 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
         }
     };
 
-    /* ---------------------- Handle Resend OTP ---------------------- */
     const handleResendOtp = async () => {
         try {
             setIsLoading(true);
-
             if (isRegisterFlow) {
-                // Registration → resend OTP to EMAIL
                 await authService.resendOtp({ email: email || "" });
             } else {
-                // Login → resend OTP to PHONE
-                await authService.sendOtp({ phoneNumber: phoneNumber || "" });
+                await authService.sendOtp({ phone: phone || "" });
             }
-
             setTimer(30);
         } catch (error) {
             console.error("Failed to resend OTP:", error);
@@ -120,10 +101,14 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
         }
     };
 
+    useEffect(() => {
+        if (timer === 0) return;
+        const id = setInterval(() => setTimer((t) => t - 1), 1000);
+        return () => clearInterval(id);
+    }, [timer]);
+
     return (
         <div className="w-full p-8">
-
-            {/* Back Button */}
             <button
                 onClick={() =>
                     setAuthState(isRegisterFlow ? AUTH_STATE.REGISTER : AUTH_STATE.LOGIN_WITH_PHONE)
@@ -134,23 +119,17 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                 <FiArrowLeft className="text-xl" />
                 Back
             </button>
-
-            {/* Header */}
             <div className="text-center mb-6 flex flex-col items-center">
                 <div className="p-3 rounded-full bg-green-100 text-green-600 text-3xl flex items-center justify-center mb-3 shadow-sm">
                     <FiShield />
                 </div>
-
                 <h2 className="text-2xl font-bold tracking-tight">
                     {isRegisterFlow ? "Verify Your Account" : "Verify OTP"}
                 </h2>
-
                 <p className="text-gray-600 mt-1">
-                    OTP sent to <span className="font-semibold">{phoneNumber || email}</span>
+                    OTP sent to <span className="font-semibold">{phone || email}</span>
                 </p>
             </div>
-
-            {/* OTP Input */}
             <div className="flex justify-center mb-4">
                 <input
                     className="
@@ -165,8 +144,6 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     disabled={isLoading}
                 />
             </div>
-
-            {/* Resend OTP */}
             <div className="flex justify-between text-sm px-1 mb-3">
                 {timer > 0 ? (
                     <p className="text-gray-500">Resend OTP in {timer}s</p>
@@ -180,7 +157,6 @@ const OTPVerificationTemplate: React.FC<OTPVerificationTemplateProps> = ({
                     </button>
                 )}
             </div>
-
             <div className="flex justify-center items-center">
                 <Button
                     label="Verify OTP"

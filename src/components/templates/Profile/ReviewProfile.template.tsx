@@ -51,7 +51,7 @@ const ReviewProfileTemplate: React.FC<ReviewProfileTemplateProps> = ({
           <div>
             <p className="text-gray-500">Phone Number</p>
             <p className="font-medium text-gray-900">
-              {values.phoneNumber || "-"}
+              {values.phone || "-"}
             </p>
           </div>
 

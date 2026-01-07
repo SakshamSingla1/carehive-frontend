@@ -15,7 +15,7 @@ export const useUploadService = () => {
         const formData = new FormData();
 
         files.forEach(file => {
-            formData.append("files", file); // matches @RequestPart("files")
+            formData.append("files", file);
         });
 
         return request(

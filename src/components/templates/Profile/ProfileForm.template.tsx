@@ -21,10 +21,7 @@ const ProfileFormTemplate: React.FC<ProfileFormTemplateProps> = ({
 }) => {
   return (
     <div>
-      {/* Card */}
       <div className="rounded-2xl bg-white shadow-sm border border-gray-100 p-8 space-y-8">
-
-        {/* Header */}
         <div className="space-y-1">
           <h3 className="text-xl font-semibold text-gray-900">
             Basic Information
@@ -33,13 +30,8 @@ const ProfileFormTemplate: React.FC<ProfileFormTemplateProps> = ({
             Update your personal details below
           </p>
         </div>
-
-        {/* Divider */}
         <div className="h-px bg-gray-200" />
-
-        {/* Fields */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <TextField
             label="Full Name"
             placeholder="Enter your full name"
@@ -48,7 +40,6 @@ const ProfileFormTemplate: React.FC<ProfileFormTemplateProps> = ({
             error={formik.touched.name && Boolean(formik.errors.name)}
             helperText={formik.touched.name && formik.errors.name}
           />
-
           <TextField
             label="Username"
             placeholder="Choose a username"
@@ -57,22 +48,20 @@ const ProfileFormTemplate: React.FC<ProfileFormTemplateProps> = ({
             error={formik.touched.username && Boolean(formik.errors.username)}
             helperText={formik.touched.username && formik.errors.username}
           />
-
           <TextField
             label="Phone Number"
             placeholder="+91 XXXXX XXXXX"
             InputProps={{ startAdornment: <FiPhone size={16} /> }}
-            {...formik.getFieldProps("phoneNumber")}
+            {...formik.getFieldProps("phone")}
             error={
-              formik.touched.phoneNumber &&
-              Boolean(formik.errors.phoneNumber)
+              formik.touched.phone &&
+              Boolean(formik.errors.phone)
             }
             helperText={
-              formik.touched.phoneNumber &&
-              formik.errors.phoneNumber
+              formik.touched.phone &&
+              formik.errors.phone
             }
           />
-
           <TextField
             label="Email Address"
             InputProps={{ startAdornment: <FiMail size={16} /> }}
@@ -81,16 +70,12 @@ const ProfileFormTemplate: React.FC<ProfileFormTemplateProps> = ({
             helperText="Email address cannot be changed"
           />
         </div>
-
-        {/* Footer */}
         <div className="flex items-center justify-between pt-6 border-t border-gray-200">
-
           <Button
             variant="tertiaryContained"
             label="Cancel"
             onClick={onClose}
           />
-
           <Button
             variant="primaryContained"
             label="Continue"

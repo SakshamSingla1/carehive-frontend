@@ -23,13 +23,13 @@ export interface AuthRegisterDTO {
     password: string;
     confirmPassword?: string;
     roleCode: string;
-    phoneNumber: string;
+    phone: string;
 }
 
 export interface AuthLoginDTO {
     username?: string;
     email?: string;
-    phoneNumber?: string;
+    phone?: string;
     otp?: string;
     password?: string;
 }
@@ -56,7 +56,7 @@ export interface UpdateUserProfileDTO {
     name: string;
     username: string;
     email: string;
-    phoneNumber: string;
+    phone: string;
     roleCode: string;
     caretakerStatus?: string;
 }
@@ -82,7 +82,7 @@ export const useAuthService = () => {
         return request(API_METHOD.POST, AUTH_URLS.RESEND_OTP, null, data);
     }
 
-    const sendOtp = async (data: {phoneNumber?: string}) => {
+    const sendOtp = async (data: {phone?: string}) => {
         return request(API_METHOD.POST, AUTH_URLS.SEND_OTP, null, data);
     }
 

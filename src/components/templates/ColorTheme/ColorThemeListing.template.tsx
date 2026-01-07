@@ -30,7 +30,6 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
 
-    // -------------------- ACTIONS --------------------
     const handleEdit = (role: string, themeName: string) => {
         navigate(makeRoute(ADMIN_ROUTES.COLOR_THEME_EDIT, {
             params: {
@@ -70,7 +69,6 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
         </div>
     );
 
-    // -------------------- RECORDS FOR TABLE --------------------
     const getRecords = () =>
         colorThemes?.map((theme, index) => [
             pagination.currentPage * pagination.pageSize + index + 1,
@@ -82,7 +80,6 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
             Action(theme.role ,theme.themeName?? "")
         ]);
 
-    // -------------------- TABLE COLUMNS --------------------
     const getTableColumns = () => [
         { label: "Sr No.", key: "srNo", type: "number" as ColumnType, props: {} },
         { label: "Theme Name", key: "themeName", type: "string" as ColumnType, props: {} },
@@ -93,7 +90,6 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
         { label: "Action", key: "action", type: "custom" as ColumnType, props: {} },
     ];
 
-    // -------------------- TABLE SCHEMA --------------------
     const getSchema = () => ({
         id: "color-theme-table",
         pagination: {
@@ -107,11 +103,8 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
         columns: getTableColumns()
     });
 
-    // -------------------- RENDER --------------------
     return (
         <div className="grid gap-y-4">
-
-            {/* -------------------- TITLE + ADD BUTTON -------------------- */}
             <div className="flex justify-between">
                 <div className="text-2xl font-semibold my-auto">Color Theme List</div>
                 <Button 
@@ -120,8 +113,6 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
                     label="Add New Color Theme"
                 />
             </div>
-
-            {/* -------------------- SEARCH BAR -------------------- */}
             <div className="flex justify-end">
                 <div className="w-[250px]">
                     <TextField
@@ -140,10 +131,7 @@ const ColorThemeListingTemplate: React.FC<ColorThemeListingTemplateProps> = ({
                     />
                 </div>
             </div>
-
-            {/* -------------------- TABLE -------------------- */}
             <Table schema={getSchema()} records={getRecords()} />
-
         </div>
     );
 };

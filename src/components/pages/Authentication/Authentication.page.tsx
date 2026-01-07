@@ -14,20 +14,10 @@ const Authentication: React.FC = () => {
   const [authState, setAuthState] = useState<AUTH_STATE | null>(null);
   const [searchParams] = useSearchParams();
 
-  const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+  const [phone, setPhone] = useState<string | null>(null);
   const [email, setEmail] = useState<string | null>(null);
-
-  /*
-    🔥 IMPORTANT:
-    When entering OTP from registration, isRegisterFlow = true
-    When entering OTP from login, isRegisterFlow = false
-    Therefore default must be false.
-  */
   const [isRegisterFlow, setIsRegisterFlow] = useState(false);
 
-  /* -------------------------------------------------------
-      1️⃣ Determine initial screen based on URL
-     ------------------------------------------------------- */
   useEffect(() => {
     try {
       const token = searchParams.get("token");
@@ -55,7 +45,7 @@ const Authentication: React.FC = () => {
       case AUTH_STATE.LOGIN_WITH_PHONE:
         return (
           <LoginWithPhoneTemplate
-            setPhoneNumber={setPhoneNumber}
+            setPhone={setPhone}
             setAuthState={setAuthState}
             setIsRegisterFlow={setIsRegisterFlow}
           />
@@ -64,7 +54,7 @@ const Authentication: React.FC = () => {
       case AUTH_STATE.OTP_VERIFICATION:
         return (
           <OtpVerificationTemplate
-            phoneNumber={phoneNumber || ""}
+            phone={phone || ""}
             email={email || ""}
             setAuthState={setAuthState}
             isRegisterFlow={isRegisterFlow}

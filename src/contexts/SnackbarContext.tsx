@@ -41,10 +41,6 @@ interface SnackbarProviderProps {
 export const SnackbarContext =
   React.createContext<SnackbarContextProps | undefined>(undefined);
 
-/* =====================
-   PROVIDER
-===================== */
-
 export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   children,
 }) => {
@@ -59,10 +55,6 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
   const progressRef = useRef<HTMLDivElement | null>(null);
   const startTimeRef = useRef<number>(0);
   const remainingRef = useRef<number>(0);
-
-  /* =====================
-     ACTIONS
-  ===================== */
 
   const hideSnackbar = useCallback(() => {
     setSnackBar((prev) => ({ ...prev, isActive: false }));
@@ -109,19 +101,11 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     [startTimer]
   );
 
-  /* =====================
-     CLEANUP
-  ===================== */
-
   useEffect(() => {
     return () => {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
     };
   }, []);
-
-  /* =====================
-     UI HELPERS
-  ===================== */
 
   const getStyles = (type: SnackbarType) => {
     switch (type) {
@@ -156,10 +140,6 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
     }
   };
 
-  /* =====================
-     SNACKBAR UI
-  ===================== */
-
   const SnackBarComponent = useMemo(() => {
     if (!snackBar.isActive || !snackBar.message) return null;
 
@@ -182,18 +162,11 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
           }}
           onMouseLeave={() => startTimer(remainingRef.current)}
         >
-          {/* Icon */}
           <div style={{ color: styles.border }}>{styles.icon}</div>
-
-          {/* Message */}
           <div className="snackbar-message">{snackBar.message}</div>
-
-          {/* Close */}
           <button className="snackbar-close" onClick={hideSnackbar}>
             <FiX size={18} />
           </button>
-
-          {/* Progress */}
           <div className="snackbar-progress">
             <div
               ref={progressRef}
@@ -203,7 +176,6 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
           </div>
         </div>
 
-        {/* Styles */}
         <style>
           {`
           .snackbar-root {
@@ -284,10 +256,6 @@ export const SnackbarProvider: React.FC<SnackbarProviderProps> = ({
       </div>
     );
   }, [snackBar, hideSnackbar, startTimer]);
-
-  /* =====================
-     CONTEXT VALUE
-  ===================== */
 
   const providerValue = useMemo(
     () => ({
